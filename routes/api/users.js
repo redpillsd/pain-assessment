@@ -5,7 +5,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const config = require('config');
 
-const User = require('../../models/Users');
+const User = require('../../models/User');
 
 /*
     @route       POST api/users
@@ -15,7 +15,7 @@ const User = require('../../models/Users');
 router.post('/', [
     check('name', 'Name is required').not().isEmpty(),
     check('lastName', 'Last Name is required').not().isEmpty(),
-    check('medicalRegNumber', 'Medical Registration Number is required').isLength({ min: 4 }),
+    check('medicalRegistrationNumber', 'Medical Registration Number is required').isLength({ min: 5 }),
     check('email', 'Please include a valid email').isEmail(),
     check('password', 'Please enter a password with 6 or more characters').isLength({ min: 6 })
 ],
@@ -27,11 +27,11 @@ async (req, res) => {
         return res.status(400).json({ errors: err.array() });
     }
 
-    const { name, lastName, medicalRegNumber, email, password } = req.body;
+    const { name, lastName, medicalRegistrationNumber, email, password } = req.body;
 
     try {
         // Check if user exist
-        let user = await User.findOne({ medicalRegNumber });
+        let user = await User.findOne({ medicalRegistrationNumber });
 
         if(user) {
             return res.status(400).json({ errors: [{ msg: 'User already exists'}] });
@@ -40,13 +40,12 @@ async (req, res) => {
         user = new User({
             name,
             lastName,
-            medicalRegNumber,
+            medicalRegistrationNumber,
             email,
             password
         });
 
         // Encrypt password
-
         const salt = await bcrypt.genSalt(10);
 
         user.password = await bcrypt.hash(password, salt);
@@ -54,7 +53,6 @@ async (req, res) => {
         await user.save();
 
         // Return jsonwebtoken
-
         const payload = {
             user: {
                 id: user.id
@@ -64,7 +62,7 @@ async (req, res) => {
         jwt.sign(
             payload, 
             config.get('jwtSecret'),
-            { expiresIn: 360000},
+            { expiresIn: 360000 },
             (err, token) => {
                 if(err) throw err;
                 res.json({ token });
@@ -74,8 +72,6 @@ async (req, res) => {
         console.log(err.message);
         res.status(500).send('Server error');
     }
-
-    
 });
 
 module.exports = router;

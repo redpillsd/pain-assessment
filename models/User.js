@@ -9,7 +9,7 @@ const UserSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    medicalRegNumber: {
+    medicalRegistrationNumber: {
         type: Number,
         required: true,
         unique: true
@@ -23,6 +23,13 @@ const UserSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    active: {
+        type: Boolean,
+        default: true
+    },
+    /* role: {
+    
+    }, */
     date: {
         type: Date,
         default: Date.now
