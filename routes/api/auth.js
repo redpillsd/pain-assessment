@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const authMiddleware = require('../../middleware/auth');
+const auth = require('../../middleware/auth');
 const { check, validationResult } = require('express-validator/check');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
@@ -9,11 +9,11 @@ const config = require('config');
 const User = require('../../models/User');
 
 /*  
-@route       GET api/auth
-@desc        Test route
-@access      Public 
+*   @route       GET api/auth
+*   @desc        Test route
+*   @access      Public 
 */
-router.get('/', authMiddleware, async (req, res) => {
+router.get('/', auth, async (req, res) => {
     try {
         const user = await User.findById(req.user.id).select('-password');
         res.send(user);
@@ -24,12 +24,12 @@ router.get('/', authMiddleware, async (req, res) => {
 });
 
 /*
-    @route       POST api/auth
-    @desc        Authenticate user & get token
-    @access      Public
+*   @route       POST api/auth
+*   @desc        Authenticate user & get token
+*   @access      Public
 */
 router.post('/', [
-    check('medicalRegistrationNumber', 'Medical Registration Number is required').isLength({ min: 5 }),
+    check('email', 'Email is required').isEmail(),
     check('password', 'Password is required').isLength({ min: 6 })
 ],
 async (req, res) => {
@@ -40,11 +40,11 @@ async (req, res) => {
         return res.status(400).json({ errors: err.array() });
     }
 
-    const { medicalRegistrationNumber, password } = req.body;
+    const { email, password } = req.body;
 
     try {
         // Check if user exist
-        let user = await User.findOne({ medicalRegistrationNumber });
+        let user = await User.findOne({ email });
 
         if(!user) {
             return res.status(400).json({ errors: [{ msg: 'Invalid Credentials'}] });

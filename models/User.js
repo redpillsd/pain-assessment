@@ -9,15 +9,10 @@ const UserSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    medicalRegistrationNumber: {
-        type: Number,
-        required: true,
-        unique: true
-    },
     email: {
         type: String,
+        unique: true,
         required: true,
-        unique: true
     },
     password: {
         type: String,
@@ -25,14 +20,20 @@ const UserSchema = new mongoose.Schema({
     },
     active: {
         type: Boolean,
-        default: true
+        default: true,
+        required: true
     },
-    /* role: {
-    
-    }, */
-    date: {
+    role: {
+        type: String,
+        default: 'USER',
+        required: true
+    },
+    creationDate: {
         type: Date,
         default: Date.now
+    },
+    lastTimeEdited: {
+        type: Date
     }
 });
 
