@@ -1,6 +1,5 @@
-const mongoose = require('mongoose');
-
-const SheetSchema = new mongoose.Schema({
+const mongoose      = require('mongoose');
+const SheetSchema   = new mongoose.Schema({
     creationDate: {
         type: Date,
         default: Date.now,
@@ -12,7 +11,7 @@ const SheetSchema = new mongoose.Schema({
     discharged: {
         type: Boolean,
         default: false,
-        required:true
+        required: true
     },
     createdBy: {
         type: mongoose.Schema.Types.ObjectId,
@@ -91,7 +90,7 @@ const SheetSchema = new mongoose.Schema({
     },
     evaluations: [
         {
-            date: {
+            creationDate: {
                 type: Date,
                 default: Date.now,
                 required: true

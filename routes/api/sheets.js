@@ -1,9 +1,8 @@
-const express = require('express');
-const router = express.Router();
-const { check, validationResult } = require('express-validator/check');
-const auth = require('../../middleware/auth');
-
-const Sheet = require('../../models/Sheet');
+const express                       = require('express');
+const router                        = express.Router();
+const { check, validationResult }   = require('express-validator/check');
+const auth                          = require('../../middleware/auth');
+const Sheet                         = require('../../models/Sheet');
 
 /*
 *   @route       POST api/sheets
@@ -88,7 +87,27 @@ router.get('/', auth, async (req, res) => {
 });
 
 /*
-*   @route       PUT api/sheets/evaluation
+*   @route       GET api/sheets/:id
+*   @desc        Get sheet by Id
+*   @access      Private
+*/
+router.get('/:id', auth, async (req, res) => {
+    try {
+        const sheet = await Sheet.findById(req.params.id);
+
+        if(!sheet) {
+            return res.status(400).json({ errors: [{ msg: 'Sheet doesn\'t exist'}] });
+        }
+
+        res.json(sheet);
+    } catch(err) {
+        console.error(err.message);
+        res.status(500).send('Server Error');
+    }
+});
+
+/*
+*   @route       PUT api/sheets/:id/evaluation
 *   @desc        create sheet evaluation
 *   @access      Private
 */
@@ -138,9 +157,7 @@ router.put('/:id/evaluation', [auth,
         }
 
         sheet.evaluations.unshift(fields);
-
         await sheet.save();
-
         res.json(sheet);
     } catch(err) {
         console.error(err.message);
@@ -148,19 +165,37 @@ router.put('/:id/evaluation', [auth,
     }
 });
 
-// TODO: Create a GET all evaluation by sheet id
+/*
+*   @route       DELETE api/sheets/:id/evaluation/:ev_id
+*   @desc        delete evaluation by id
+*   @access      Private
+*/
+router.delete('/:id/evaluation/:ev_id', auth, async (req, res) => {
+    try {
+        const sheet = await Sheet.findById(req.params.id);
 
-// TODO: Create a DELETE evaluation by sheet id?
+        if(!sheet) {
+            return res.status(400).json({ errors: [{ msg: 'Sheet doesn\'t exists'}] });
+        }
+
+        const removeIndex = sheet.evaluations.map(item => item.id).indexOf(req.params.ev_id);
+
+        sheet.evaluations.splice(removeIndex, 1);
+        await sheet.save();
+        res.json(sheet);
+    } catch(err) {
+        console.error(err.message);
+        res.status(500).send('Server Error');
+    }
+});
 
 /*
 *   @route       DELETE api/sheets
-*   @desc        delete sheet and evaluations by id
+*   @desc        delete sheet id
 *   @access      Private
 */
 router.delete('/:id', auth, async (req, res) => {
     try {
-        // TODO: remove evaluations
-
         const sheet = await Sheet.findByIdAndRemove(req.params.id);
 
         if(!sheet) {

@@ -1,16 +1,15 @@
-const express = require('express');
-const router = express.Router();
-const auth = require('../../middleware/auth');
-const { check, validationResult } = require('express-validator/check');
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const config = require('config');
-
-const User = require('../../models/User');
+const express                       = require('express');
+const router                        = express.Router();
+const auth                          = require('../../middleware/auth');
+const { check, validationResult }   = require('express-validator/check');
+const bcrypt                        = require('bcryptjs');
+const jwt                           = require('jsonwebtoken');
+const config                        = require('config');
+const User                          = require('../../models/User');
 
 /*  
 *   @route       GET api/auth
-*   @desc        Test route
+*   @desc        Authenticate user
 *   @access      Public 
 */
 router.get('/', auth, async (req, res) => {
@@ -25,7 +24,7 @@ router.get('/', auth, async (req, res) => {
 
 /*
 *   @route       POST api/auth
-*   @desc        Authenticate user & get token
+*   @desc        Authenticate user & get token (login)
 *   @access      Public
 */
 router.post('/', [
