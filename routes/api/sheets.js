@@ -190,7 +190,7 @@ router.delete('/:id/evaluation/:ev_id', auth, async (req, res) => {
 });
 
 /*
-*   @route       DELETE api/sheets
+*   @route       DELETE api/sheets/:id
 *   @desc        delete sheet id
 *   @access      Private
 */
