@@ -74,7 +74,12 @@ router.get('/', auth, async (req, res) => {
     try {
         const sheets = await Sheet.find()
             .populate({
-                path: 'createdBy', 
+                path: 'createdBy',
+                model: 'user',
+                select: 'name lastName -_id'
+            })
+            .populate({
+                path: 'evaluations.evaluator', 
                 model: 'user', 
                 select: 'name lastName -_id'
             });
@@ -93,7 +98,18 @@ router.get('/', auth, async (req, res) => {
 */
 router.get('/:id', auth, async (req, res) => {
     try {
-        const sheet = await Sheet.findById(req.params.id);
+        const sheetId = req.params.id,
+              sheet = await Sheet.findById(sheetId)
+                .populate({
+                    path: 'createdBy',
+                    model: 'user',
+                    select: 'name lastName -_id'
+                })
+                .populate({
+                    path: 'evaluations.evaluator', 
+                    model: 'user', 
+                    select: 'name lastName -_id'
+                });
 
         if(!sheet) {
             return res.status(400).json({ errors: [{ msg: 'Sheet doesn\'t exist'}] });
@@ -103,6 +119,37 @@ router.get('/:id', auth, async (req, res) => {
     } catch(err) {
         console.error(err.message);
         res.status(500).send('Server Error');
+    }
+});
+
+/*
+*   @route       PUT api/sheets/:id
+*   @desc        Update sheet by Id
+*   @access      Private
+*/
+router.put('/:id', auth, async (req, res) => {
+    try {
+        const sheetId = req.params.id,
+              updatedSheet = await Sheet.findByIdAndUpdate(sheetId, req.body, { new: true })
+                .populate({
+                    path: 'createdBy',
+                    model: 'user',
+                    select: 'name lastName -_id'
+                })
+                .populate({
+                    path: 'evaluations.evaluator', 
+                    model: 'user', 
+                    select: 'name lastName -_id'
+                });
+
+        if(!updatedSheet) {
+            return res.status(400).json({ errors: [{ msg: 'Sheet doesn\'t exist'}] });
+        }
+
+        res.json(updatedSheet);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server Error');  
     }
 });
 
@@ -141,24 +188,99 @@ router.put('/:id/evaluation', [auth,
     fields.notes = notes && notes;
 
     try {
+        const sheetId = req.params.id,
+              updatedSheet = await Sheet.findByIdAndUpdate(
+                sheetId,
+                { $push: { "evaluations": fields } },
+                { safe: true, upsert: true, new: true })
+                    .populate({
+                        path: 'createdBy',
+                        model: 'user',
+                        select: 'name lastName -_id'
+                    })
+                    .populate({
+                        path: 'evaluations.evaluator', 
+                        model: 'user', 
+                        select: 'name lastName -_id'
+                    });
 
-        const sheet = await Sheet.findById(req.params.id)
-            /* .populate({
-                path: 'evaluations', 
-                populate: { 
-                    path: 'evaluator', 
-                    model: 'user', 
-                    select: 'name lastName -_id'
-                }
-            }) */;
-
-        if(!sheet) {
+        if(!updatedSheet) {
             return res.status(400).json({ errors: [{ msg: 'Sheet doesn\'t exists'}] });
         }
 
-        sheet.evaluations.unshift(fields);
-        await sheet.save();
-        res.json(sheet);
+        res.json(updatedSheet);
+    } catch(err) {
+        console.error(err.message);
+        res.status(500).send('Server Error');
+    }
+});
+
+/*
+*   @route       PUT api/sheets/:id/evaluation/:ev_id
+*   @desc        update evaluation by id
+*   @access      Private
+*/
+router.put('/:id/evaluation/:ev_id', auth, async (req, res) => {
+
+    const {
+        env,
+        shift,
+        adverseEffects,
+        rescue,
+        notes
+    } = req.body;
+
+    const fields = {};
+
+    fields.env = env && env;
+    fields.shift = shift && shift;
+    fields.adverseEffects = adverseEffects && adverseEffects;
+    fields.evaluator = req.user.id;
+    fields.rescue = rescue && rescue;
+    fields.notes = notes && notes;
+
+    try {
+        const sheetId = req.params.id,
+              evaluationId = req.params.ev_id,
+              updatedSheet = await Sheet.findByIdAndUpdate(
+                sheetId,
+                { 
+                    $set: { 
+                        'evaluations.$[ev]': fields 
+                    }
+                },
+                { 
+                    arrayFilters: [
+                        {'ev._id': 
+                            { 
+                                $eq: evaluationId
+                            }
+                        }
+                    ],
+                    new: true 
+                })
+                    .populate({
+                        path: 'createdBy',
+                        model: 'user',
+                        select: 'name lastName -_id'
+                    })
+                    .populate({
+                        path: 'evaluations.evaluator', 
+                        model: 'user', 
+                        select: 'name lastName -_id'
+                    });
+
+        if(!updatedSheet) {
+            return res.status(400).json({ errors: [{ msg: 'Sheet doesn\'t exists'}] });
+        }
+
+        /* const updateIndex = sheet.evaluations.map(item => item.id).indexOf(req.params.ev_id);
+
+        if(updateIndex) {
+            
+        }
+        await sheet.save(); */
+        res.json(updatedSheet);
     } catch(err) {
         console.error(err.message);
         res.status(500).send('Server Error');
@@ -172,17 +294,28 @@ router.put('/:id/evaluation', [auth,
 */
 router.delete('/:id/evaluation/:ev_id', auth, async (req, res) => {
     try {
-        const sheet = await Sheet.findById(req.params.id);
+        const sheetId = req.params.id,
+              evaluationId = req.params.ev_id,
+              updatedSheet = await Sheet.findByIdAndUpdate(
+                sheetId,
+                { $pull: { "evaluations": { _id: evaluationId } } },
+                { new: true })
+                    .populate({
+                        path: 'createdBy',
+                        model: 'user',
+                        select: 'name lastName -_id'
+                    })
+                    .populate({
+                        path: 'evaluations.evaluator', 
+                        model: 'user', 
+                        select: 'name lastName -_id'
+                    });
 
-        if(!sheet) {
+        if(!updatedSheet) {
             return res.status(400).json({ errors: [{ msg: 'Sheet doesn\'t exists'}] });
         }
 
-        const removeIndex = sheet.evaluations.map(item => item.id).indexOf(req.params.ev_id);
-
-        sheet.evaluations.splice(removeIndex, 1);
-        await sheet.save();
-        res.json(sheet);
+        res.json(updatedSheet);
     } catch(err) {
         console.error(err.message);
         res.status(500).send('Server Error');
@@ -196,7 +329,8 @@ router.delete('/:id/evaluation/:ev_id', auth, async (req, res) => {
 */
 router.delete('/:id', auth, async (req, res) => {
     try {
-        const sheet = await Sheet.findByIdAndRemove(req.params.id);
+        const sheetId = req.params.id,
+              sheet = await Sheet.findByIdAndRemove(sheetId);
 
         if(!sheet) {
             return res.status(400).json({ errors: [{ msg: 'Sheet doesn\'t exists'}] });
