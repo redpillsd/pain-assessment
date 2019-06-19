@@ -32,7 +32,6 @@ router.post('/', [
     check('password', 'Password is required').isLength({ min: 6 })
 ],
 async (req, res) => {
-    console.log(req.body);
     const err = validationResult(req);
     
     if(!err.isEmpty()) {
@@ -59,7 +58,9 @@ async (req, res) => {
         // Return jsonwebtoken
         const payload = {
             user: {
-                id: user.id
+                id: user.id,
+                role: user.role,
+                active: user.active
             }
         };
 
