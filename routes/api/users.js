@@ -74,9 +74,9 @@ async (req, res) => {
 /*
 *   @route       GET api/users
 *   @desc        Get all users
-*   @access      Private
+*   @access      Private, ADMIN role only
 */
-router.get('/', auth, async (req, res) => {
+router.get('/', auth('ADMIN'), async (req, res) => {
     try {
         const users = await User.find().select('name lastName active role -_id');
 
@@ -88,12 +88,14 @@ router.get('/', auth, async (req, res) => {
 });
 
 /*
-*   @route       GET api/users/:id
+*   @route       GET api/users/profile/:id
 *   @desc        Get user by Id
 *   @access      Private
 */
-router.get('/:id', auth, async (req, res) => {
+// Just the user that created his own account can access his own profile
+router.get('/profile/:id', auth(), async (req, res) => {
     try {
+        // TODO return just the needed info
         const user = await User.findById(req.params.id);
 
         if(!user) {
@@ -107,6 +109,17 @@ router.get('/:id', auth, async (req, res) => {
     }
 });
 
-// TODO: Create a route to change user activate (just an admin user can modify this, add a new middleware?)
+// TODO create a route that returns just the profile of the user to change
+// TODO add the profile to the user
+
+// TODO: Create a route to change user activate (just an admin user can modify this)
+/*
+*   @route       PUT api/users/activate/:id
+*   @desc        Activate/Deactivate user
+*   @access      Private, ADMIN role only
+*/
+router.put('/activate/:id', auth('ADMIN'), async (req, res) => {
+    res.send('you\'re an admin user');
+});
 
 module.exports = router;

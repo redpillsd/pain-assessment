@@ -9,7 +9,7 @@ const Sheet                         = require('../../models/Sheet');
 *   @desc        create sheet
 *   @access      Private
 */
-router.post('/', [auth,
+router.post('/', [auth(),
     [
         check('patient.name', 'Patient Name is required').not().isEmpty(),
         check('patient.lastName', 'Patient LastName is required').not().isEmpty(),
@@ -70,7 +70,7 @@ router.post('/', [auth,
 *   @desc        Get all sheets
 *   @access      Private
 */
-router.get('/', auth, async (req, res) => {
+router.get('/', auth(), async (req, res) => {
     try {
         const sheets = await Sheet.find()
             .populate({
@@ -96,7 +96,7 @@ router.get('/', auth, async (req, res) => {
 *   @desc        Get sheet by Id
 *   @access      Private
 */
-router.get('/:id', auth, async (req, res) => {
+router.get('/:id', auth(), async (req, res) => {
     try {
         const sheetId = req.params.id,
               sheet = await Sheet.findById(sheetId)
@@ -127,7 +127,7 @@ router.get('/:id', auth, async (req, res) => {
 *   @desc        Update sheet by Id
 *   @access      Private
 */
-router.put('/:id', auth, async (req, res) => {
+router.put('/:id', auth(), async (req, res) => {
     try {
         const sheetId = req.params.id,
               updatedSheet = await Sheet.findByIdAndUpdate(sheetId, req.body, { new: true })
@@ -158,7 +158,7 @@ router.put('/:id', auth, async (req, res) => {
 *   @desc        create sheet evaluation
 *   @access      Private
 */
-router.put('/:id/evaluation', [auth, 
+router.put('/:id/evaluation', [auth(), 
     [
         check('env', 'Env is Required').not().isEmpty(),
         check('shift', 'Shift is Required').not().isEmpty()
@@ -220,7 +220,7 @@ router.put('/:id/evaluation', [auth,
 *   @desc        update evaluation by id
 *   @access      Private
 */
-router.put('/:id/evaluation/:ev_id', auth, async (req, res) => {
+router.put('/:id/evaluation/:ev_id', auth(), async (req, res) => {
 
     const {
         env,
@@ -274,12 +274,6 @@ router.put('/:id/evaluation/:ev_id', auth, async (req, res) => {
             return res.status(400).json({ errors: [{ msg: 'Sheet doesn\'t exists'}] });
         }
 
-        /* const updateIndex = sheet.evaluations.map(item => item.id).indexOf(req.params.ev_id);
-
-        if(updateIndex) {
-            
-        }
-        await sheet.save(); */
         res.json(updatedSheet);
     } catch(err) {
         console.error(err.message);
@@ -292,7 +286,7 @@ router.put('/:id/evaluation/:ev_id', auth, async (req, res) => {
 *   @desc        delete evaluation by id
 *   @access      Private
 */
-router.delete('/:id/evaluation/:ev_id', auth, async (req, res) => {
+router.delete('/:id/evaluation/:ev_id', auth(), async (req, res) => {
     try {
         const sheetId = req.params.id,
               evaluationId = req.params.ev_id,
@@ -327,7 +321,7 @@ router.delete('/:id/evaluation/:ev_id', auth, async (req, res) => {
 *   @desc        delete sheet id
 *   @access      Private
 */
-router.delete('/:id', auth, async (req, res) => {
+router.delete('/:id', auth(), async (req, res) => {
     try {
         const sheetId = req.params.id,
               sheet = await Sheet.findByIdAndRemove(sheetId);
