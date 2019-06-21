@@ -12,11 +12,13 @@ const User                          = require('../../models/User');
 *   @desc        Create user
 *   @access      Public 
 */
+// To create a user if role is not passed, the default value is "USER" if you not you can create any other role
 router.post('/', [
-    check('name', 'Name is required').not().isEmpty(),
+    check('firstName', 'First Name is required').not().isEmpty(),
     check('lastName', 'Last Name is required').not().isEmpty(),
     check('email', 'Please include a valid email').isEmail(),
-    check('password', 'Please enter a password with 6 or more characters').isLength({ min: 6 })
+    check('password', 'Please enter a password with 6 or more characters').isLength({ min: 6 }),
+    check('role', 'A valid Role is required')
 ],
 async (req, res) => {
     const err = validationResult(req);
@@ -25,7 +27,7 @@ async (req, res) => {
         return res.status(400).json({ errors: err.array() });
     }
 
-    const { name, lastName, email, password } = req.body;
+    const { firstName, lastName, email, password, role } = req.body;
 
     try {
         // Check if user exist
@@ -36,10 +38,11 @@ async (req, res) => {
         }
 
         user = new User({
-            name,
+            firstName,
             lastName,
             email,
-            password
+            password,
+            role
         });
 
         // Encrypt password
@@ -76,11 +79,11 @@ async (req, res) => {
 /*
 *   @route       GET api/users
 *   @desc        Get all users
-*   @access      Private, ADMIN role only
+*   @access      Private, ADMIN and MODERATOR roles only
 */
-router.get('/', auth('ADMIN'), async (req, res) => {
+router.get('/', auth(['ADMIN', 'MODERATOR']), async (req, res) => {
     try {
-        const users = await User.find().select('name lastName active role -_id');
+        const users = await User.find().select('firstName lastName active role -_id');
 
         res.json(users);
     } catch(err) {
@@ -94,11 +97,9 @@ router.get('/', auth('ADMIN'), async (req, res) => {
 *   @desc        Get user by Id
 *   @access      Private
 */
-// Just the user that created his own account can access his own profile
 router.get('/profile/:id', auth(), async (req, res) => {
     try {
-        // TODO return just the needed info
-        const user = await User.findById(req.params.id);
+        const user = await User.findById(req.params.id).select('firstName lastName email -_id');
 
         if(!user) {
             return res.status(400).json({ errors: [{ msg: 'User doesn\'t exist'}] });
@@ -111,17 +112,46 @@ router.get('/profile/:id', auth(), async (req, res) => {
     }
 });
 
-// TODO create a route that returns just the profile of the user to change
-// TODO add the profile to the user
+/*
+*   @route       PUT api/users/profile/:id
+*   @desc        Update user profile by id
+*   @access      Private
+*/
+router.put('/profile/:id', auth(), async (req, res) => {
+    try {
+        const userId = req.params.id,
+              updatedUser = await User.findByIdAndUpdate(userId, req.body, { new: true }).select('firstName lastName email -_id');
 
-// TODO: Create a route to change user activate (just an admin user can modify this)
+        if(!updatedUser) {
+            return res.status(400).json({ errors: [{ msg: 'User doesn\'t exist'}] });
+        }
+
+        res.json(updatedUser);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server Error');  
+    }
+});
+
 /*
 *   @route       PUT api/users/activate/:id
 *   @desc        Activate/Deactivate user
-*   @access      Private, ADMIN role only
+*   @access      Private, ADMIN and MODERATOR roles only
 */
-router.put('/activate/:id', auth('ADMIN'), async (req, res) => {
-    res.send('you\'re an admin user');
+router.put('/activate/:id', auth(['ADMIN', 'MODERATOR']), async (req, res) => {
+    try {
+        const userId = req.params.id,
+              updatedUser = await User.findByIdAndUpdate(userId, req.body, { new: true }).select('-role -_id');
+
+        if(!updatedUser) {
+            return res.status(400).json({ errors: [{ msg: 'User doesn\'t exist'}] });
+        }
+
+        res.json(updatedUser);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server Error');  
+    }
 });
 
 module.exports = router;
