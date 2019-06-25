@@ -1,25 +1,33 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-import Navbar from './components/layout/Navbar';
+import { Container, Typography, Box, Grid } from '@material-ui/core';
+
 import Login from './components/auth/Login/Login';
 import Register from './components/auth/Register/Register';
-
-
-import './App.css';
+import Sheet from './components/Sheet/Sheet'
 
 const App = () => {
-    return(
+    return (
         <Router>
-            <Fragment>
-                {/* <Navbar></Navbar> */}
+            <Container maxWidth="lg"> 
+                <Box my={4}>
+                    {/* <Grid container justify="center">
+                        <Grid item>
+                            <Typography variant="h4" component="h1" gutterBottom>
+                                Evaluacion del Dolor
+                            </Typography>
+                        </Grid>
+                    </Grid> */}
+                    <Switch>
+                        <Route exact path="/" component={Login} />
+                        <Route exact path="/register" component={Register} />
+                    </Switch>
+                </Box>
+                
                 <Switch>
-                    <Route exact path="/" component={Login} />
-                    <Route exact path="/register" component={Register} />
+                    <Route exact path="/sheet" component={Sheet} />
                 </Switch>
-                <section className="container">
-                    
-                </section>
-            </Fragment>
+            </Container>
         </Router>
     );
 }
