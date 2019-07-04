@@ -13,7 +13,8 @@ const styles = makeStyles(theme => ({
     },
     checkbox: {
         marginLeft: theme.spacing(0),
-        marginTop: theme.spacing(2),
+        marginTop: theme.spacing(1),
+        marginBottom: theme.spacing(1),
     },
     fab: {
         /* position: 'absolute',

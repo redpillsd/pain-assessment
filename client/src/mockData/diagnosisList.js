@@ -1,0 +1,26 @@
+const diagnosisList = [
+    { label: 'Fractura de Fémur' },
+    { label: 'Fractura de Húmero' },
+    { label: 'Fractura de Tibia' },
+    { label: 'Fractura de Cúbito y Radio' },
+    { label: 'Fractura de Muñeca' },
+    { label: 'Fractura de Cadera' },
+    { label: 'Escoliosis' },
+    { label: 'Displasia Congenita de Cadera' },
+    { label: 'Genu Valgo' },
+    { label: 'Genu Varo' },
+    { label: 'Pie Bot' },
+    { label: 'Hallux Valgus' },
+    { label: 'Abdomen Agudo' },
+    { label: 'Hernia Inguinal' },
+    { label: 'Falta de descenso Testicular' },
+    { label: 'Vólvulo Intestinal' },
+    { label: 'MAR' },
+    { label: 'Hipospadia' },
+    { label: 'Hidrocele' },
+    { label: 'Fimosis' },
+    { label: 'Hidronefrosis' },
+    { label: 'Vejiga neurogénica' },
+];
+
+export default diagnosisList;

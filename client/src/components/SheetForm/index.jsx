@@ -20,11 +20,11 @@ import InfusionPumpForm from './InfusionPumpForm';
 */
 
 const defaultData = {
-    step: 2,
+    step: 3,
     firstName: '',
     lastName: '',
     age: '',
-    weight: '',
+    weight: 87,
     room: '',
     medicalHistoryNumber: '',
     diagnosis: '',
@@ -107,9 +107,7 @@ const Sheet = () => {
                 <Typography component="h1" variant="h5">
                     Creación de Ficha
                 </Typography>
-                {
-                    renderSteps()
-                }
+                {renderSteps()}
             </div>
         </Container>
     );

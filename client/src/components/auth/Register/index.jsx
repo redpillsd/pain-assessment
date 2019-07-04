@@ -126,7 +126,6 @@ export default function SignUp() {
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>
               <TextField
-                autoComplete="fname"
                 name="firstName"
                 variant="outlined"
                 required
@@ -144,7 +143,6 @@ export default function SignUp() {
                 id="lastName"
                 label="Apellido"
                 name="lastName"
-                autoComplete="lname"
               />
             </Grid>
             <Grid item xs={12}>
@@ -155,7 +153,6 @@ export default function SignUp() {
                 id="email"
                 label="Email"
                 name="email"
-                autoComplete="email"
               />
             </Grid>
             <Grid item xs={12}>
@@ -167,7 +164,6 @@ export default function SignUp() {
                 label="Password"
                 type="password"
                 id="password"
-                autoComplete="current-password"
               />
             </Grid>
             {/* <Grid item xs={12}>
