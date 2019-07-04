@@ -3,8 +3,8 @@ import { Avatar, Button, CssBaseline, TextField, FormControlLabel, Checkbox, Lin
 
 import styles from './styles';
 
-import ChipAutocomplete from '../../ChipAutocomplete';
-import SelectInput from '../../SelectInput';
+import ChipAutocomplete from '../../ui/ChipAutocomplete';
+import SelectInput from '../../ui/SelectInput';
 
 import diagnosisList from '../../../mockData/diagnosisList';
 import surgeryList from '../../../mockData/surgeryList';

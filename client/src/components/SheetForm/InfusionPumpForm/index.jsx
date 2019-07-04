@@ -5,8 +5,8 @@ import _map from 'lodash/map';
 
 import styles from './styles';
 
-import ChipAutocomplete from '../../ChipAutocomplete';
-import ChipSelectMultiple from '../../ChipSelectMultiple';
+import ChipAutocomplete from '../../ui/ChipAutocomplete';
+import ChipSelectMultiple from '../../ui/ChipSelectMultiple';
 
 import infusionPumpDrugsList from '../../../mockData/infusionPumpDrugsList';
 

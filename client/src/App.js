@@ -2,8 +2,8 @@ import React from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import { Container, Typography, Box, Grid } from '@material-ui/core';
 
-import Login from './components/auth/Login';
-import Register from './components/auth/Register';
+import Login from './components/Login';
+import Register from './components/Register';
 import Sheet from './components/SheetForm';
 
 const App = () => {

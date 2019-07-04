@@ -4,7 +4,7 @@ import AddIcon from '@material-ui/icons/Add';
 
 import styles from './styles';
 
-import SelectInput from '../../SelectInput';
+import SelectInput from '../../ui/SelectInput';
 
 import lockDrugsList from '../../../mockData/lockDrugsList';
 

@@ -5,8 +5,8 @@ import AddIcon from '@material-ui/icons/Add';
 import styles from './styles';
 
 import DrugForm from '../DrugForm';
-import ChipSelectMultiple from '../../ChipSelectMultiple';
-import SelectInput from '../../SelectInput';
+import ChipSelectMultiple from '../../ui/ChipSelectMultiple';
+import SelectInput from '../../ui/SelectInput';
 
 import lockTypeList from '../../../mockData/lockTypeList';
 
