@@ -9,9 +9,7 @@ import Chip from '@material-ui/core/Chip';
 
 import styles from './styles';
 
-const renderInput = inputProps => {
-    const { InputProps, classes, ref, ...other } = inputProps;
-
+const renderInput = ({ InputProps, classes, ref, ...other }) => {
     return (
         <TextField
             variant="outlined"
@@ -29,8 +27,7 @@ const renderInput = inputProps => {
     );
 }
 
-const renderSuggestion = suggestionProps => {
-    const { suggestion, index, itemProps, highlightedIndex, selectedItem } = suggestionProps;
+const renderSuggestion = ({ suggestion, index, itemProps, highlightedIndex, selectedItem }) => {
     const isHighlighted = highlightedIndex === index;
     const isSelected = (selectedItem || '').indexOf(suggestion.label) > -1;
 
@@ -76,22 +73,20 @@ const getSuggestions = (suggestions, value, { showEmpty = false } = {}) => {
         });
 }
 
-const ChipAutocomplete = props => {
+const ChipAutocomplete = ({ suggestions, name, label, placeHolder, required, formikSetFieldValue, errors, value }) => {
     const classes = styles();
-
-    const { suggestions, label, placeHolder } = props;
 
     const [inputValue, setInputValue] = React.useState('');
     const [selectedItem, setSelectedItem] = React.useState([]);
 
-    function handleKeyDown(event) {
-        if (selectedItem.length && !inputValue.length && event.key === 'Backspace') {
+    function handleKeyDown(e) {
+        if (selectedItem.length && !inputValue.length && e.key === 'Backspace') {
             setSelectedItem(selectedItem.slice(0, selectedItem.length - 1));
         }
     }
 
-    function handleInputChange(event) {
-        setInputValue(event.target.value);
+    function handleInputChange(e) {
+        setInputValue(e.target.value);
     }
 
     function handleChange(item) {
@@ -107,7 +102,24 @@ const ChipAutocomplete = props => {
         const newSelectedItem = [...selectedItem];
         newSelectedItem.splice(newSelectedItem.indexOf(item), 1);
         setSelectedItem(newSelectedItem);
+        if (newSelectedItem.length === 0){
+            formikSetFieldValue(name, [])
+        }
     };
+
+    React.useEffect(() => {
+        console.log(selectedItem)
+        if(selectedItem.length > 0) {
+            formikSetFieldValue(name, selectedItem)
+        }
+      }, [selectedItem]);
+
+    React.useEffect(() => {
+        console.log(selectedItem)
+        if(value.length > 0) {
+            setSelectedItem(value)
+        }
+      }, []);
 
     return (
         <Downshift
@@ -135,7 +147,9 @@ const ChipAutocomplete = props => {
                         {renderInput({
                             fullWidth: true,
                             classes,
-                            label: label,
+                            name: name,
+                            error: errors,
+                            label: `${label} ${required ? '*' : ''}`,
                             InputLabelProps: getLabelProps(),
                             InputProps: {
                                 startAdornment: selectedItem.map(item => (

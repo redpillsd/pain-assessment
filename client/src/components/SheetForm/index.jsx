@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Avatar, Button, CssBaseline, TextField, FormControlLabel, Checkbox, Link, Grid, Box, Typography, Container, InputAdornment } from '@material-ui/core'
+import { Typography, Container } from '@material-ui/core'
 
 import styles from './styles';
 
@@ -19,59 +19,85 @@ import InfusionPumpForm from './InfusionPumpForm';
     }; 
 */
 
-const defaultData = {
-    step: 3,
-    firstName: '',
-    lastName: '',
-    age: '',
-    weight: 87,
-    room: '',
-    medicalHistoryNumber: '',
-    diagnosis: '',
-    surgery: '',
-    pathologicalBackground: ''
+const initialPatient = {
+    patient: {
+        firstName: '',
+        lastName: '',
+        age: {
+            value: '',
+            unit: '',
+        },
+        weight: '',
+        room: '',
+        medicalHistoryNumber: '',
+        diagnosis: [],
+        surgery: [],
+        pathologicalBackground: '',
+    }
 };
+
+const initialLock = {
+    lock: {
+        /* type: '',
+        totalVolume: '',
+        drugs: [], */
+    }
+}
+
+const initialInfusionPump = {
+    infusionPump: {
+        /* totalVolume: 0,
+        infusionRate: 0,
+        drugs: [], */
+    },
+}
 
 const Sheet = () => {
     const classes = styles();
-    const [formData, setFormData] = useState(defaultData);
+
+    const [step, setStep] = useState(1);
+
+    const [useLock, setUseLock] = useState(false);
+    const [useLockClass, setUseLockClass] = useState(classes.show);
+    const [useInfusionPump, setUseInfusionPump] = useState(false);
+    const [useInfusionPumpClass, setUseInfusionPumpClass] = useState(classes.hide);
+
+    const [patient, setPatient] = useState(initialPatient);
+    const [lock, setLock] = useState(initialLock);
+    const [infusionPump, setInfusionPump] = useState(initialInfusionPump);
+
+    const handleCheckboxI = e => {
+        setUseInfusionPump(e.target.checked);
+        useInfusionPump ? setUseInfusionPumpClass(classes.hide) : setUseInfusionPumpClass(classes.show);
+    };
+
+    const handleCheckboxL = e => {
+        setUseLock(e.target.checked);
+        if (useLock) {
+            setUseLockClass(classes.hide);
+        } else {
+            setUseLockClass(classes.show);
+        }
+    };
 
     // Go to the next step
     const nextStep = () => {
-        const { step } = formData;
-        setFormData({
-            step: step + 1
-        });
-    }
+        setStep(step + 1);
+    };
 
     // Go to the previous step
     const prevStep = () => {
-        const { step } = formData;
-        setFormData({
-            step: step - 1
-        });
-    }
-
-    // Handle fields change
-    const onChange = e => setFormData({ ...formData, [e.target.name]: e.target.value });
-
-    const onSubmit = e => {
-        e.preventDefault();
-        console.log(formData);
+        setStep(step - 1);
     };
 
     const renderSteps = () => {
-        const { step } = formData;
-        const { firstName, lastName, age, weight, room, medicalHistoryNumber, diagnosis, surgery, pathologicalBackground } = formData;
-        const patientForm = { firstName, lastName, age, weight, room, medicalHistoryNumber, diagnosis, surgery, pathologicalBackground };
-
         switch (step) {
             case 1:
                 return (
                     <PatientForm
                         nextStep={() => nextStep()}
-                        onChange={e => onChange(e)}
-                        values={patientForm}
+                        patient={patient}
+                        setPatient={patient => setPatient(patient)}
                     />
                 );
             case 2:
@@ -79,8 +105,11 @@ const Sheet = () => {
                     <LockForm
                         nextStep={() => nextStep()}
                         prevStep={() => prevStep()}
-                        onChange={e => onChange(e)}
-                        values={patientForm}
+                        handleCheckbox={e => handleCheckboxL(e)}
+                        lock={lock}
+                        setLock={lock => setLock(lock)}
+                        useLock={useLock}
+                        useLockClass={useLockClass}
                     />
                 );
             case 3:
@@ -88,8 +117,12 @@ const Sheet = () => {
                     <InfusionPumpForm
                         nextStep={() => nextStep()}
                         prevStep={() => prevStep()}
-                        onChange={e => onChange(e)}
-                        values={patientForm}
+                        handleCheckbox={e => handleCheckboxI(e)}
+                        infusionPump={infusionPump}
+                        setInfusionPump={infusionPump => setInfusionPump(infusionPump)}
+                        useInfusionPump={useInfusionPump}
+                        useInfusionPumpClass={useInfusionPumpClass}
+                        weight={patient.weight}
                     />
                 );
             case 4:
@@ -98,8 +131,8 @@ const Sheet = () => {
                 );
             default:
                 return null;
-        }
-    }
+        };
+    };
 
     return (
         <Container component="main" maxWidth="xl">

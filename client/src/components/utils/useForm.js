@@ -12,19 +12,19 @@ const useForm = (callback, validate) => {
         }
     }, [errors]);
 
-    const handleSubmit = (event) => {
-        if (event) {
-            event.preventDefault();
+    const handleSubmit = (e) => {
+        if (e) {
+            e.preventDefault();
         }
 
         setIsSubmitting(true);
         setErrors(validate(values));
     };
 
-    const handleChange = (event) => {
-        event.persist();
+    const handleChange = (e) => {
+        e.persist();
         setValues(values => (
-            { ...values, [event.target.name]: event.target.value}));
+            { ...values, [e.target.name]: e.target.value}));
     };
 
     return {

@@ -15,7 +15,7 @@ const diagnosisList = [
     { label: 'Hernia Inguinal' },
     { label: 'Falta de descenso Testicular' },
     { label: 'Vólvulo Intestinal' },
-    { label: 'MAR' },
+    { value: 'MAR', label: 'MAR' },
     { label: 'Hipospadia' },
     { label: 'Hidrocele' },
     { label: 'Fimosis' },

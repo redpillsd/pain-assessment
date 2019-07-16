@@ -2,8 +2,8 @@ import React from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import { Container, Typography, Box, Grid } from '@material-ui/core';
 
-import Login from './components/Login';
-import Register from './components/Register';
+import Login from './components/LoginForm';
+import SignUp from './components/SignUpForm';
 import Sheet from './components/SheetForm';
 
 const App = () => {
@@ -20,7 +20,7 @@ const App = () => {
                     </Grid> */}
                     <Switch>
                         <Route exact path="/" component={Login} />
-                        <Route exact path="/register" component={Register} />
+                        <Route exact path="/sign-up" component={SignUp} />
                     </Switch>
                 </Box>
                 

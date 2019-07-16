@@ -16,7 +16,7 @@ const styles = makeStyles(theme => ({
     },
     unitSelect: {
         marginTop: theme.spacing(0.5),
-        marginLeft: theme.spacing(1),
+        marginLeft: theme.spacing(2),
     },
     submit: {
         margin: theme.spacing(3, 0, 2),

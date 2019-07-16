@@ -29,29 +29,30 @@ function getStyles(name, value, theme) {
     };
 }
 
-export default function MultipleSelect(props) {
+export default function MultipleSelect({ id, name, label, itemList, required, formikSetFieldValue, errors }) {
     const classes = styles();
     const theme = useTheme();
-
-    const { id, name, label, itemList } = props;
 
     const [value, setValue] = React.useState([]);
 
     const inputLabel = React.useRef(null);
     const [labelWidth, setLabelWidth] = React.useState(0);
+    
     React.useEffect(() => {
         setLabelWidth(inputLabel.current.offsetWidth);
     }, []);
 
-    function handleChange(event) {
-        setValue(event.target.value);
+    function handleChange(e) {
+        setValue(e.target.value);
+        formikSetFieldValue(name, e.target.value)
     }
 
     return (
         <div className={classes.root}>
             <FormControl variant="outlined" margin="dense" className={classes.formControl}>
-                <InputLabel ref={inputLabel} htmlFor={id}>{label}</InputLabel>
+                <InputLabel ref={inputLabel} htmlFor={id} error={errors}>{label} {required ? '*' : ''}</InputLabel>
                 <Select
+                    error={errors}
                     multiple
                     value={value}
                     onChange={handleChange}

@@ -5,7 +5,7 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import styles from './styles';
 
 import useForm from '../utils/useForm';
-import validate from '../utils/formValidationRules';
+import validate from './formValidationRules';
 import ErrorsMessage from '../ui/ErrorsMessage';
 
 const SignUp = () => {

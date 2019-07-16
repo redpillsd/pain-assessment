@@ -1,15 +1,29 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { TextField, Grid, Fab, InputAdornment, Box } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
+import DeleteIcon from '@material-ui/icons/Delete';
 
 import styles from './styles';
 
 import SelectInput from '../../ui/SelectInput';
+import DrugList from './DrugList'
 
 import lockDrugsList from '../../../mockData/lockDrugsList';
 
-const DrugForm = () => {
+const DrugForm = ({ addNewDrug }) => {
     const classes = styles();
+
+    const [drugs, setDrugs] = useState([]);
+
+    const onClickFab = () => {
+        //addNewDrug();
+        setDrugs([...drugs, 'drug']);
+    }
+
+    const deleteDrug = drugIndex => {
+        const newDrugs = drugs.filter((_, index) => index !== drugIndex);
+        setDrugs(newDrugs);
+    }
 
     return (
         <Box border={1} borderColor={'rgba(0, 0, 0, 0.23)'} borderRadius={5}>
@@ -18,7 +32,7 @@ const DrugForm = () => {
                     <SelectInput
                         id={'drug'}
                         name={'drug'}
-                        label={'Droga'}
+                        label={'Droga *'}
                         itemList={lockDrugsList}
                     />
                 </Grid>
@@ -38,10 +52,18 @@ const DrugForm = () => {
                         />
                     </Grid>
                     <div className={classes.add}>
-                        <Fab size="small" color="secondary" aria-label="Add">
+                        <Fab 
+                            size="small" 
+                            color="primary" 
+                            aria-label="Add"
+                            onClick={() => onClickFab()}
+                        >
                             <AddIcon />
-                        </Fab>
+                        </Fab>    
                     </div>
+                </Grid>
+                <Grid item md={12} sm={12} xs={12} >
+                    <DrugList drugs={drugs} deleteDrug={deleteDrug}></DrugList>
                 </Grid>
             </div>
         </Box>

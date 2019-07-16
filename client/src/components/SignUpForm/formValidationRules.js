@@ -7,7 +7,6 @@ export default function validate(values) {
     const passShouldBeEqual = 'La confirmacion de password debe coincidir con el password'
     const invalidField = 'Este campo es inválido';
     
-    // Register
     if (!values.firstName) {
         errors.firstName = isRequiredField;
     } else if (values.firstName.length < 3) {
@@ -20,15 +19,6 @@ export default function validate(values) {
         errors.lastName = shouldHaveMoreThanThree;
     }
 
-    if (!values.passwordConfirmation) {
-        errors.passwordConfirmation = isRequiredField;
-    } else if (values.passwordConfirmation.length < 5) {
-        errors.passwordConfirmation = shouldHaveMoreThanFive;
-    } else if (values.password !== values.passwordConfirmation) {
-        errors.passwordConfirmation = passShouldBeEqual;
-    }
-
-    // Login
     if (!values.email) {
         errors.email = isRequiredField;
     } else if (!/\S+@\S+\.\S+/.test(values.email)) {
@@ -39,6 +29,14 @@ export default function validate(values) {
         errors.password = isRequiredField;
     } else if (values.password.length < 5) {
         errors.password = shouldHaveMoreThanFive;
+    }
+
+    if (!values.passwordConfirmation) {
+        errors.passwordConfirmation = isRequiredField;
+    } else if (values.passwordConfirmation.length < 5) {
+        errors.passwordConfirmation = shouldHaveMoreThanFive;
+    } else if (values.password !== values.passwordConfirmation) {
+        errors.passwordConfirmation = passShouldBeEqual;
     }
 
     return errors;

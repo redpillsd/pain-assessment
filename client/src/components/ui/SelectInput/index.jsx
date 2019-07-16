@@ -1,5 +1,5 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+
 import OutlinedInput from '@material-ui/core/OutlinedInput';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -7,17 +7,10 @@ import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import _map from 'lodash/map';
 
-const useStyles = makeStyles(theme => ({
-    formControl: {
-        width: '100%',
-        marginTop: theme.spacing(0.5),
-    },
-}));
+import styles from './styles';
 
-const SelectInput = (props) => {
-    const classes = useStyles();
-
-    const { id, name, label, itemList } = props;
+const SelectInput = ({ id, name, label, itemList, required, errors, formikHandleChange }) => {
+    const classes = styles();
 
     const [values, setValues] = React.useState({
         [name]: '',
@@ -29,22 +22,24 @@ const SelectInput = (props) => {
         setLabelWidth(inputLabel.current.offsetWidth);
     }, []);
 
-    const handleChange = event => {
+    const handleChange = e => {
         setValues(oldValues => ({
             ...oldValues,
-            [event.target.name]: event.target.value,
+            [e.target.name]: e.target.value,
         }));
+        formikHandleChange(e);
     }
 
     return (
         <FormControl variant="outlined" className={classes.formControl}>
-            <InputLabel ref={inputLabel} htmlFor={id} margin="dense">
-                {label}
+            <InputLabel ref={inputLabel} htmlFor={id} margin="dense" error={errors}>
+                {`${label} ${required ? '*' : ''}`}
             </InputLabel>
             <Select
                 value={values[name]}
                 onChange={handleChange}
                 input={<OutlinedInput variant="outlined" labelWidth={labelWidth} fullWidth={true} name={name} id={id} margin="dense" />}
+                error={errors}
             >
                 <MenuItem value="">
                     <em>Ninguno</em>
