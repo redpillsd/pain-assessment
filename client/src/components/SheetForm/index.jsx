@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { Typography, Container } from '@material-ui/core'
-
-import styles from './styles';
+import Typography from '@material-ui/core/Typography'
+import Container from '@material-ui/core/Container'
 
 import PatientForm from './PatientForm';
 import LockForm from './LockForm';
 import InfusionPumpForm from './InfusionPumpForm';
+import styles from './styles';
 
 /*  
     The breakpoint **start** at this value.
@@ -20,51 +20,38 @@ import InfusionPumpForm from './InfusionPumpForm';
 */
 
 const initialPatient = {
-    patient: {
-        firstName: '',
-        lastName: '',
-        age: {
-            value: '',
-            unit: '',
-        },
-        weight: '',
-        room: '',
-        medicalHistoryNumber: '',
-        diagnosis: [],
-        surgery: [],
-        pathologicalBackground: '',
-    }
-};
-
-const initialLock = {
-    lock: {
-        /* type: '',
-        totalVolume: '',
-        drugs: [], */
-    }
-}
-
-const initialInfusionPump = {
-    infusionPump: {
-        /* totalVolume: 0,
-        infusionRate: 0,
-        drugs: [], */
+    firstName: 'asdasd',
+    lastName: 'sdasda',
+    age: {
+        value: '12',
+        unit: 'Meses',
     },
-}
+    weight: '35',
+    room: '12',
+    medicalHistoryNumber: '12345',
+    diagnosis: [
+        "MAR"
+    ],
+    surgery: [
+        "Colocación de placa en 8"
+    ],
+    pathologicalBackground: 'asdasdasd',
+};
 
 const Sheet = () => {
     const classes = styles();
 
-    const [step, setStep] = useState(1);
+    const [step, setStep] = useState(3);
 
     const [useLock, setUseLock] = useState(false);
-    const [useLockClass, setUseLockClass] = useState(classes.show);
+    const [useLockClass, setUseLockClass] = useState(classes.hide);
+
     const [useInfusionPump, setUseInfusionPump] = useState(false);
     const [useInfusionPumpClass, setUseInfusionPumpClass] = useState(classes.hide);
 
     const [patient, setPatient] = useState(initialPatient);
-    const [lock, setLock] = useState(initialLock);
-    const [infusionPump, setInfusionPump] = useState(initialInfusionPump);
+    const [lock, setLock] = useState({});
+    const [infusionPump, setInfusionPump] = useState({});
 
     const handleCheckboxI = e => {
         setUseInfusionPump(e.target.checked);
@@ -122,7 +109,7 @@ const Sheet = () => {
                         setInfusionPump={infusionPump => setInfusionPump(infusionPump)}
                         useInfusionPump={useInfusionPump}
                         useInfusionPumpClass={useInfusionPumpClass}
-                        weight={patient.weight}
+                        patient={patient}
                     />
                 );
             case 4:

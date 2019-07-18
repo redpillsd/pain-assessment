@@ -1,59 +1,53 @@
 import React from 'react';
-
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import FormControl from '@material-ui/core/FormControl';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import InputAdornment from '@material-ui/core/InputAdornment';
-
-import styles from './styles';
+import { Formik } from 'formik';
+import * as Yup from 'yup';
 
 import ChipAutocomplete from '../../ui/ChipAutocomplete';
 import SelectInput from '../../ui/SelectInput';
-
 import ErrorsMessage from '../../ui/ErrorsMessage';
+import styles from './styles';
 
 import diagnosisList from '../../../mockData/diagnosisList';
 import surgeryList from '../../../mockData/surgeryList';
-
-import { Formik } from 'formik';
-import * as Yup from 'yup';
 
 const PatientForm = ({ patient, setPatient, nextStep }) => {
     const classes = styles();
 
     const validationSchema = Yup.object({
-        patient: Yup.object({
-            firstName: Yup.string()
-                .required('Este campo es requerido'),
-            lastName: Yup.string()
-                .required('Este campo es requerido'),
-            age: Yup.object({
-                value: Yup.string()
-                    .required('Este campo es requerido')
-                    .matches(/^[0-9]*$/, 'Este campo debe ser numérico'),
-                unit: Yup.string()
-                    .required('Este campo es requerido'),
-            }),
-            weight: Yup.string()
+        firstName: Yup.string()
+            .required('Este campo es requerido'),
+        lastName: Yup.string()
+            .required('Este campo es requerido'),
+        age: Yup.object({
+            value: Yup.string()
                 .required('Este campo es requerido')
                 .matches(/^[0-9]*$/, 'Este campo debe ser numérico'),
-            room: Yup.string()
+            unit: Yup.string()
                 .required('Este campo es requerido'),
-            medicalHistoryNumber: Yup.string()
-                .required('Este campo es requerido'),
-            diagnosis: Yup.array()
-                .min(1, 'Elige por lo menos una de las opciones')
-                .of(
-                    Yup.string().required(),
-                ),
-            surgery: Yup.array()
-                .min(1, 'Elige por lo menos una de las opciones')
-                .of(
-                    Yup.string().required(),
-                ),
-        })
+        }),
+        weight: Yup.string()
+            .required('Este campo es requerido')
+            .matches(/^[0-9]*$/, 'Este campo debe ser numérico'),
+        room: Yup.string()
+            .required('Este campo es requerido'),
+        medicalHistoryNumber: Yup.string()
+            .required('Este campo es requerido'),
+        diagnosis: Yup.array()
+            .min(1, 'Elige por lo menos una de las opciones')
+            .of(
+                Yup.string().required(),
+            ),
+        surgery: Yup.array()
+            .min(1, 'Elige por lo menos una de las opciones')
+            .of(
+                Yup.string().required(),
+            ),
     });
 
     const ageUnit = [
@@ -85,39 +79,15 @@ const PatientForm = ({ patient, setPatient, nextStep }) => {
                     handleSubmit,
                     handleReset,
                 } = props;
-
-                const ePatient = errors && errors.patient,
-                    eFirstName = ePatient && ePatient.firstName,
-                    eLastName = ePatient && ePatient.lastName,
-                    eAge = ePatient && ePatient.age,
-                    eAgeValue = eAge && eAge.value,
-                    eAgeUnit = eAge && eAge.unit,
-                    eWeight = ePatient && ePatient.weight,
-                    eRoom = ePatient && ePatient.room,
-                    eMedicalHistoryNumber = ePatient && ePatient.medicalHistoryNumber,
-                    eDiagnosis = ePatient && ePatient.diagnosis,
-                    eSurgery = ePatient && ePatient.surgery;
-
-                const tPatient = touched && touched.patient,
-                    tFirstName = tPatient && tPatient.firstName,
-                    tLastName = tPatient && tPatient.lastName,
-                    tAge = tPatient && tPatient.age,
-                    tAgeValue = tAge && tAge.value,
-                    tAgeUnit = tAge && tAge.unit,
-                    tWeight = tPatient && tPatient.weight,
-                    tRoom = tPatient && tPatient.room,
-                    tMedicalHistoryNumber = tPatient && tPatient.medicalHistoryNumber,
-                    tDiagnosis = tPatient && tPatient.diagnosis,
-                    tSurgery = tPatient && tPatient.surgery;
                     
                 return (
                     <div className={classes.paper}>
                         <Typography component="h1" variant="h6">
                             Paciente
                         </Typography>
-                        {/* <div>
+                        <div>
                             <pre>{JSON.stringify(props, null, 2)}</pre>
-                        </div> */}
+                        </div>
                         <form className={classes.form} noValidate>
                             <Grid container spacing={2}>
                                 <Grid item md={6} sm={12} xs={12}>
@@ -128,13 +98,13 @@ const PatientForm = ({ patient, setPatient, nextStep }) => {
                                             required
                                             fullWidth
                                             label="Nombre"
-                                            name="patient.firstName"
+                                            name="firstName"
                                             autoFocus
                                             onChange={handleChange}
-                                            value={values.patient.firstName}
-                                            error={!!(tFirstName && eFirstName)}
+                                            value={values.firstName}
+                                            error={!!(touched.firstName && errors.firstName)}
                                         />
-                                        <ErrorsMessage errors={tFirstName && eFirstName} />
+                                        <ErrorsMessage errors={touched.firstName && errors.firstName} />
                                     </FormControl>
                                 </Grid>
                                 <Grid item md={6} sm={12} xs={12}>
@@ -145,12 +115,12 @@ const PatientForm = ({ patient, setPatient, nextStep }) => {
                                             required
                                             fullWidth
                                             label="Apellido"
-                                            name="patient.lastName"
+                                            name="lastName"
                                             onChange={handleChange}
-                                            value={values.patient.lastName}
-                                            error={!!(tLastName && eLastName)}
+                                            value={values.lastName}
+                                            error={!!(touched.lastName && errors.lastName)}
                                         />
-                                        <ErrorsMessage errors={tLastName && eLastName}/>
+                                        <ErrorsMessage errors={touched.lastName && errors.lastName}/>
                                     </FormControl>
                                 </Grid>
                                 <Grid className={classes.unit} item md={6} sm={12} xs={12}>
@@ -162,26 +132,27 @@ const PatientForm = ({ patient, setPatient, nextStep }) => {
                                                 required
                                                 fullWidth
                                                 label="Edad"
-                                                name="patient.age.value"
+                                                name="age.value"
                                                 onChange={handleChange}
-                                                value={values.patient.age.value}
-                                                error={!!(tAgeValue && eAgeValue)}
+                                                value={values.age && values.age.value}
+                                                error={!!((touched.age && touched.age.value) && ( errors.age && errors.age.value))}
                                             />
-                                            <ErrorsMessage errors={tAgeValue && eAgeValue}/>
+                                            <ErrorsMessage errors={(touched.age && touched.age.value) && ( errors.age && errors.age.value)}/>
                                         </FormControl>
                                     </Grid>
                                     <Grid className={classes.unitSelect} item md={6} sm={6} xs={6}>
                                         <SelectInput
                                             id={'ageUnit'}
-                                            name={'patient.age.unit'}
+                                            name={'age.unit'}
                                             label={'Unidad'}
                                             itemList={ageUnit}
-                                            value={values.patient.age.unit}
-                                            errors={!!(tAgeUnit && eAgeUnit)}
+                                            value={values.age && values.age.unit}
+                                            selectedValue={values.age && values.age.unit}
                                             required={true}
                                             formikHandleChange={handleChange}
+                                            errors={!!((touched.age && touched.age.unit) && ( errors.age && errors.age.unit))}
                                         />
-                                        <ErrorsMessage errors={tAgeUnit && eAgeUnit}/>
+                                        <ErrorsMessage errors={(touched.age && touched.age.unit) && ( errors.age && errors.age.unit)}/>
                                     </Grid>
                                 </Grid>
                                 <Grid item md={6} sm={6} xs={6}>
@@ -192,15 +163,15 @@ const PatientForm = ({ patient, setPatient, nextStep }) => {
                                             required
                                             fullWidth
                                             label="Peso"
-                                            name="patient.weight"
+                                            name="weight"
                                             InputProps={{
                                                 endAdornment: <InputAdornment position="end">Kg</InputAdornment>,
                                             }}
                                             onChange={handleChange}
-                                            value={values.patient.weight}
-                                            error={!!(tWeight && eWeight)}
+                                            value={values.weight}
+                                            error={!!(touched.weight && errors.weight)}
                                         />
-                                        <ErrorsMessage errors={tWeight && eWeight}/>
+                                        <ErrorsMessage errors={touched.weight && errors.weight}/>
                                     </FormControl>
                                 </Grid>
                                 <Grid item md={6} sm={6} xs={6}>
@@ -211,12 +182,12 @@ const PatientForm = ({ patient, setPatient, nextStep }) => {
                                             required
                                             fullWidth
                                             label="Habitación"
-                                            name="patient.room"
+                                            name="room"
                                             onChange={handleChange}
-                                            value={values.patient.room}
-                                            error={!!(tRoom && eRoom)}
+                                            value={values.room}
+                                            error={!!(touched.room && errors.room)}
                                         />
-                                        <ErrorsMessage errors={tRoom && eRoom}/>
+                                        <ErrorsMessage errors={touched.room && errors.room}/>
                                     </FormControl>
                                 </Grid>
                                 <Grid item md={6} sm={6} xs={6}>
@@ -227,12 +198,12 @@ const PatientForm = ({ patient, setPatient, nextStep }) => {
                                             required
                                             fullWidth
                                             label="Nro de HC"
-                                            name="patient.medicalHistoryNumber"
+                                            name="medicalHistoryNumber"
                                             onChange={handleChange}
-                                            value={values.patient.medicalHistoryNumber}
-                                            error={!!(tMedicalHistoryNumber && eMedicalHistoryNumber)}
+                                            value={values.medicalHistoryNumber}
+                                            error={!!(touched.medicalHistoryNumber && errors.medicalHistoryNumber)}
                                         />
-                                        <ErrorsMessage errors={tMedicalHistoryNumber && eMedicalHistoryNumber}/>
+                                        <ErrorsMessage errors={touched.medicalHistoryNumber && errors.medicalHistoryNumber}/>
                                     </FormControl>
                                 </Grid>
                                 <Grid item md={6} sm={12} xs={12}>
@@ -240,26 +211,26 @@ const PatientForm = ({ patient, setPatient, nextStep }) => {
                                         suggestions={diagnosisList}
                                         label={'Diagnóstico'}
                                         placeHolder={'Escribe una o mas opciones'}
-                                        value={values.patient.diagnosis}
-                                        name={'patient.diagnosis'}
+                                        value={values.diagnosis}
+                                        name={'diagnosis'}
                                         required={true}
                                         formikSetFieldValue={setFieldValue}
-                                        errors={!!(tDiagnosis && eDiagnosis)}
+                                        errors={!!(touched.diagnosis && errors.diagnosis)}
                                     />
-                                    <ErrorsMessage errors={tDiagnosis && eDiagnosis}/>
+                                    <ErrorsMessage errors={touched.diagnosis && errors.diagnosis}/>
                                 </Grid>
                                 <Grid item md={6} sm={12} xs={12}>
                                     <ChipAutocomplete
                                         suggestions={surgeryList}
                                         label={'Cirugía'}
                                         placeHolder={'Escribe una o mas opciones'}
-                                        value={values.patient.surgery}
-                                        name={'patient.surgery'}
+                                        value={values.surgery}
+                                        name={'surgery'}
                                         required={true}
                                         formikSetFieldValue={setFieldValue}
-                                        errors={!!(tSurgery && eSurgery)}
+                                        errors={!!(touched.surgery && errors.surgery)}
                                     />
-                                    <ErrorsMessage errors={tSurgery && eSurgery}/>
+                                    <ErrorsMessage errors={touched.surgery && errors.surgery}/>
                                 </Grid>
                                 <Grid item md={12} sm={12} xs={12}>
                                     <TextField
@@ -269,9 +240,9 @@ const PatientForm = ({ patient, setPatient, nextStep }) => {
                                         multiline
                                         rowsMax="4"
                                         label="Antecedentes Patológicos"
-                                        name="patient.pathologicalBackground"
+                                        name="pathologicalBackground"
                                         onChange={handleChange}
-                                        value={values.patient.pathologicalBackground}
+                                        value={values.pathologicalBackground}
                                     />
                                 </Grid>
                             </Grid>

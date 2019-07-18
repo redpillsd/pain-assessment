@@ -1,47 +1,52 @@
-import React, { Fragment, useState, useEffect } from 'react';
-import { Button, TextField, FormControl, FormControlLabel, Checkbox, Grid, Typography, InputAdornment } from '@material-ui/core';
+import React, { useState } from 'react';
+import Button from '@material-ui/core/Button';
+import TextField from '@material-ui/core/TextField';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Checkbox from '@material-ui/core/Checkbox';
+import FormControl from '@material-ui/core/FormControl';
+import InputAdornment from '@material-ui/core/InputAdornment';
+import Grid from '@material-ui/core/Grid';
+import Typography from '@material-ui/core/Typography';
 import _map from 'lodash/map';
-
-import styles from './styles';
-
-import DrugForm from '../DrugForm';
-import ChipSelectMultiple from '../../ui/ChipSelectMultiple';
-
-import lockTypeList from '../../../mockData/lockTypeList';
-
-import ErrorsMessage from '../../ui/ErrorsMessage';
 
 import { Formik } from 'formik';
 import * as Yup from 'yup';
-import _isEmpty from 'lodash/isEmpty';
+import DrugForm from '../DrugForm';
+import ChipSelectMultiple from '../../ui/ChipSelectMultiple';
+import ErrorsMessage from '../../ui/ErrorsMessage';
+import styles from './styles';
+
+import lockTypeList from '../../../mockData/lockTypeList';
 
 const LockForm = ({ nextStep, prevStep, handleCheckbox, lock, setLock, useLock, useLockClass }) => {
     const classes = styles();
+    
+    const [direction, setDirection] = useState('nextStep');
 
-    const [lockObj, setLockObj] = useState({});
-
-    const validationSchema = Yup.object({
-        lock: Yup.lazy(values => {
-            console.log('@values',values)
-            if (values !== undefined) {
-                return Yup.object().shape({
-                    type: Yup.string()
-                        .required('Este campo es requerido'),
-                    totalVolume: Yup.string()
-                        .required('Este campo es requerido'),
-                    /* drugs: Yup.array()
-                        .min(1, 'Agregar por lo menos una')
-                        .of(
-                            Yup.object().shape({
-                                name: Yup.string().required(),
-                                dose: Yup.string().required(),
-                            })
-                        ), */
-                })
-            }
-            return Yup.mixed().notRequired();
-        })
-    });
+    const validationSchema = () => {
+        if (useLock) {
+            return Yup.object({
+                type: Yup.array()
+                    .min(1, 'Elige por lo menos una de las opciones')
+                    .of(
+                        Yup.string().required(),
+                    ),
+                totalVolume: Yup.string()
+                    .required('Este campo es requerido')
+                    .matches(/^[0-9]*$/, 'Este campo debe ser numérico'),
+                /* drugs: Yup.array()
+                    .min(1, 'Agregar por lo menos una')
+                    .of(
+                        Yup.object().shape({
+                            name: Yup.string().required(),
+                            dose: Yup.string().required(),
+                        })
+                    ), */
+            });
+        }
+        setLock({});
+        return Yup.mixed().notRequired();
+    }
 
     const onAddNewDrug = () => {
         console.log('@@@ added');
@@ -49,23 +54,14 @@ const LockForm = ({ nextStep, prevStep, handleCheckbox, lock, setLock, useLock, 
 
     return (
         <Formik
+            enableReinitialize={true}
             initialValues={lock}
             validationSchema={validationSchema}
             onSubmit={(values, { setSubmitting }) => {
-                // console.log('@@@ step ->', step);
-                // if (step === 4) {
-                    setSubmitting(true);
-                    
-                    if (useLock) { 
-                        setLock(values)
-                    } else {
-                        setLock({lock: {}})
-                    }
-                    console.log(lock)
-                    /* nextStep(); */
-                // } else {
-                //     nextStep()
-                // }
+                setSubmitting(true);
+                console.log('@@@ Lock values ->',values);
+                setLock(values)
+                direction === 'prevStep' ? prevStep() : nextStep();
             }}
         >
             {(props) => {
@@ -73,24 +69,10 @@ const LockForm = ({ nextStep, prevStep, handleCheckbox, lock, setLock, useLock, 
                     values,
                     touched,
                     errors,
-                    dirty,
-                    isSubmitting,
-                    isValidating,
-                    isValid,
                     handleChange,
                     setFieldValue,
-                    handleBlur,
                     handleSubmit,
-                    handleReset,
                 } = props;
-                
-                const eLock = errors && errors.lock,
-                    eType = eLock && eLock.type,
-                    eTotalVolume = eLock && eLock.totalVolume;
-
-                const tLock = touched && touched.lock,
-                    tType = tLock && tLock.type,
-                    tTotalVolume = tLock && tLock.totalVolume;
 
                 return (
                     <div className={classes.paper}>
@@ -110,20 +92,6 @@ const LockForm = ({ nextStep, prevStep, handleCheckbox, lock, setLock, useLock, 
                                     labelPlacement="start"
                                     onChange={handleCheckbox}
                                 />
-                                <Button
-                                    type="button"
-                                    fullWidth
-                                    variant="contained"
-                                    color="secondary"
-                                    className={classes.submit}
-                                    onClick={() => setLockObj({lock: {
-                                        type: '',
-                                        totalVolume: '',
-                                        drugs: [],
-                                    }})}
-                                >
-                                    Agregar Bloqueo
-                                </Button>
                             </Grid>
                         </Grid>
                         <form className={classes.form} noValidate>
@@ -131,15 +99,16 @@ const LockForm = ({ nextStep, prevStep, handleCheckbox, lock, setLock, useLock, 
                                 <Grid container spacing={2}>
                                     <Grid item md={12} sm={12} xs={12}>
                                         <ChipSelectMultiple 
-                                            name={'lock.type'}
+                                            name={'type'}
                                             label={'Tipo de Bloqueo/s'}
                                             itemList={lockTypeList}
-                                            value={values.lock.type}
+                                            value={values.type}
+                                            selectedValues={values.type}
                                             required={true}
                                             formikSetFieldValue={setFieldValue}
-                                            errors={!!(tType && eType)}
+                                            errors={!!errors.type}
                                         />
-                                        <ErrorsMessage errors={tType && eType}/>
+                                        <ErrorsMessage errors={errors.type}/>
                                     </Grid>
                                     <Grid item md={12} sm={12} xs={12}>
                                         <FormControl fullWidth>
@@ -149,15 +118,15 @@ const LockForm = ({ nextStep, prevStep, handleCheckbox, lock, setLock, useLock, 
                                                 required
                                                 fullWidth
                                                 label="Volumen Total"
-                                                name="lock.totalVolume"
+                                                name="totalVolume"
                                                 InputProps={{
                                                     endAdornment: <InputAdornment position="end">ml</InputAdornment>,
                                                 }}
                                                 onChange={handleChange}
-                                                value={values.lock.totalVolume}
-                                                error={!!(tTotalVolume && eTotalVolume)}
+                                                value={values.totalVolume || ''}
+                                                error={!!errors.totalVolume}
                                             />
-                                            <ErrorsMessage errors={tTotalVolume && eTotalVolume} />
+                                            <ErrorsMessage errors={ errors.totalVolume} />
                                         </FormControl>
                                     </Grid>
                                     <Grid item md={12} sm={12} xs={12}>
@@ -174,8 +143,14 @@ const LockForm = ({ nextStep, prevStep, handleCheckbox, lock, setLock, useLock, 
                                         fullWidth
                                         variant="contained"
                                         color="secondary"
+                                        name="prevStep"
                                         className={classes.submit}
-                                        onClick={prevStep}
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            if (e.currentTarget.name !== direction) {
+                                                setDirection(e.currentTarget.name)
+                                            }
+                                            handleSubmit()}}
                                     >
                                         Anterior
                                         </Button>
@@ -186,8 +161,13 @@ const LockForm = ({ nextStep, prevStep, handleCheckbox, lock, setLock, useLock, 
                                         fullWidth
                                         variant="contained"
                                         color="primary"
+                                        name="nextStep"
                                         className={classes.submit}
-                                        onClick={handleSubmit}
+                                        onClick={(e) => {e.preventDefault();
+                                            if (e.currentTarget.name !== direction) {
+                                                setDirection(e.currentTarget.name)
+                                            };
+                                            handleSubmit()}}
                                     >
                                         Siguiente
                                         </Button>

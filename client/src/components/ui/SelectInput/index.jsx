@@ -9,7 +9,7 @@ import _map from 'lodash/map';
 
 import styles from './styles';
 
-const SelectInput = ({ id, name, label, itemList, required, errors, formikHandleChange }) => {
+const SelectInput = ({ id, name, label, itemList, required, errors, formikHandleChange, selectedValue }) => {
     const classes = styles();
 
     const [values, setValues] = React.useState({
@@ -18,8 +18,15 @@ const SelectInput = ({ id, name, label, itemList, required, errors, formikHandle
 
     const inputLabel = React.useRef(null);
     const [labelWidth, setLabelWidth] = React.useState(0);
+    
     React.useEffect(() => {
         setLabelWidth(inputLabel.current.offsetWidth);
+
+        if (selectedValue) {
+            setValues({
+                [name]: selectedValue,
+            });
+        }
     }, []);
 
     const handleChange = e => {

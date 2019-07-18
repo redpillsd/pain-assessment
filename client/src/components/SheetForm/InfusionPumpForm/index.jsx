@@ -1,27 +1,30 @@
-import React, { Fragment, useState, useEffect } from 'react';
-import { Avatar, Button, CssBaseline, TextField, FormControlLabel, Checkbox, Link, Grid, Box, Typography, FormControl, Container, Fab, InputAdornment } from '@material-ui/core';
-import AddIcon from '@material-ui/icons/Add';
+import React, { useState, useEffect } from 'react';
+import Button from '@material-ui/core/Button';
+import TextField from '@material-ui/core/TextField';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Checkbox from '@material-ui/core/Checkbox';
+import FormControl from '@material-ui/core/FormControl';
+import InputAdornment from '@material-ui/core/InputAdornment';
+import Grid from '@material-ui/core/Grid';
+import Typography from '@material-ui/core/Typography';
+
 import _map from 'lodash/map';
-
-import styles from './styles';
-
-import ChipAutocomplete from '../../ui/ChipAutocomplete';
-import ChipSelectMultiple from '../../ui/ChipSelectMultiple';
-
-import ErrorsMessage from '../../ui/ErrorsMessage';
-
 import { Formik } from 'formik';
 import * as Yup from 'yup';
-import _isEmpty from 'lodash/isEmpty';
+import ChipSelectMultiple from '../../ui/ChipSelectMultiple';
+import ErrorsMessage from '../../ui/ErrorsMessage';
+import styles from './styles';
 
 import infusionPumpDrugsList from '../../../mockData/infusionPumpDrugsList';
 
-const InfusionPumpForm = ({ /* formikProps, */ nextStep, prevStep, handleCheckbox, infusionPump, setInfusionPump, useInfusionPump, useInfusionPumpClass, weight }) => {
+const InfusionPumpForm = ({ nextStep, prevStep, handleCheckbox, infusionPump, setInfusionPump, useInfusionPump, useInfusionPumpClass, patient }) => {
     const classes = styles();
 
-    /* const { weight } = values.patient; */
+    const [direction, setDirection] = useState('nextStep');
 
     const[drugsData, setDrugsData] = useState([]);
+
+    const { weight } = patient;
 
     useEffect(() =>{
         setDrugsData(calculateDose(infusionPumpDrugsList, weight));
@@ -30,7 +33,7 @@ const InfusionPumpForm = ({ /* formikProps, */ nextStep, prevStep, handleCheckbo
     const calculateDose = (list, weight) => {
         let calculatedDoseArray = [];
         _map(list, i => {
-            let label = `${i.label} ${i.value} mg/kg -> ${Math.trunc(i.value * weight)} mg`,
+            let label = `${i.label} ${i.value} mg/kg -> ${Math.trunc(i.value * parseInt(weight))} mg`,
                 value = label;
             calculatedDoseArray.push({ label, value })
         })
@@ -38,47 +41,36 @@ const InfusionPumpForm = ({ /* formikProps, */ nextStep, prevStep, handleCheckbo
         return calculatedDoseArray;
     }
 
-    const validationSchema = Yup.object({
-        infusionPump: Yup.lazy(value => {
-            if (!_isEmpty(value)) {
-                return Yup.object().shape({
-                    totalVolume: Yup.string()
-                        .required('Este campo es requerido'),
-                    infusionRate: Yup.string()
-                        .required('Este campo es requerido'),
-                    drugs: Yup.array()
-                        .min(1, 'Elige por lo menos una de las opciones')
-                        .of(
-                            Yup.object().shape({
-                                name: Yup.string().required(),
-                                dose: Yup.string().required(),
-                            })
-                        ),
-                })
-            }
-            return Yup.mixed().notRequired();
-        })
-    });
+    const validationSchema = () => {
+        if (useInfusionPump) {
+            return Yup.object({
+                totalVolume: Yup.string()
+                    .required('Este campo es requerido')
+                    .matches(/^[0-9]*$/, 'Este campo debe ser numérico'),
+                infusionRate: Yup.string()
+                    .required('Este campo es requerido')
+                    .matches(/^[0-9]*$/, 'Este campo debe ser numérico'),
+                drugs: Yup.array()
+                    .min(1, 'Elige por lo menos una de las opciones')
+                    .of(
+                        Yup.string().required(),
+                    ),
+            });
+        }
+        setInfusionPump({});
+        return Yup.mixed().notRequired();
+    }
 
     return (
         <Formik
+            enableReinitialize={true}
             initialValues={infusionPump}
             validationSchema={validationSchema}
             onSubmit={(values, { setSubmitting }) => {
-                // console.log('@@@ step ->', step);
-                // if (step === 4) {
-                    setSubmitting(true);
-                    
-                    if (useInfusionPump) { 
-                        setInfusionPump(values)
-                    } else {
-                        setInfusionPump({infusionPump: {}})
-                    }
-                    console.log(infusionPump)
-                    /* nextStep(); */
-                // } else {
-                //     nextStep()
-                // }
+                setSubmitting(true);
+                console.log('@@@ InfusionPump values ->',values);
+                setInfusionPump(values);
+                direction === 'prevStep' ? prevStep() : nextStep();
             }}
         >
             {(props) => {
@@ -86,24 +78,20 @@ const InfusionPumpForm = ({ /* formikProps, */ nextStep, prevStep, handleCheckbo
                     values,
                     touched,
                     errors,
-                    dirty,
-                    isSubmitting,
-                    isValidating,
-                    isValid,
                     handleChange,
                     setFieldValue,
-                    handleBlur,
                     handleSubmit,
-                    handleReset,
                 } = props;
                 
                 const eInfusionPump = errors && errors.infusionPump,
                     eTotalVolume = eInfusionPump && eInfusionPump.totalVolume,
-                    eInfusionRate = eInfusionPump && eInfusionPump.infusionRate;
+                    eInfusionRate = eInfusionPump && eInfusionPump.infusionRate,
+                    eDrugs = eInfusionPump && eInfusionPump.drugs;
 
                 const tInfusionPump = touched && touched.infusionPump,
                     tTotalVolume = tInfusionPump && tInfusionPump.totalVolume,
-                    tInfusionRate = tInfusionPump && tInfusionPump.infusionRate;
+                    tInfusionRate = tInfusionPump && tInfusionPump.infusionRate,
+                    tDrugs = tInfusionPump && tInfusionPump.drugs;
 
                 return (
                     <div className={classes.paper}>
@@ -136,48 +124,48 @@ const InfusionPumpForm = ({ /* formikProps, */ nextStep, prevStep, handleCheckbo
                                                 required
                                                 fullWidth
                                                 label="Volumen Total"
-                                                name="infusionPump.totalVolume"
+                                                name="totalVolume"
                                                 InputProps={{
                                                     endAdornment: <InputAdornment position="end">ml</InputAdornment>,
                                                 }}
                                                 onChange={handleChange}
-                                                value={values.infusionPump.totalVolume}
-                                                error={!!(tTotalVolume && eTotalVolume)}
+                                                value={values.totalVolume || ''}
+                                                error={!!errors.totalVolume}
                                             />
-                                            <ErrorsMessage errors={tTotalVolume && eTotalVolume} />
+                                            <ErrorsMessage errors={errors.totalVolume} />
                                         </FormControl>
                                     </Grid>
                                     <Grid item md={12} sm={12} xs={12}>
-                                        <TextField
-                                            variant="outlined"
-                                            margin="dense"
-                                            required
-                                            fullWidth
-                                            label="Ritmo de Infusión"
-                                            name="infusionPump.infusionRate"
-                                            InputProps={{
-                                                endAdornment: <InputAdornment position="end">ml/hora</InputAdornment>,
-                                            }}
-                                        />
+                                        <FormControl fullWidth>
+                                            <TextField
+                                                variant="outlined"
+                                                margin="dense"
+                                                required
+                                                fullWidth
+                                                label="Ritmo de Infusión"
+                                                name="infusionRate"
+                                                InputProps={{
+                                                    endAdornment: <InputAdornment position="end">ml/hora</InputAdornment>,
+                                                }}
+                                                onChange={handleChange}
+                                                value={values.infusionRate || ''}
+                                                error={!!(errors.infusionRate)}
+                                            />
+                                            <ErrorsMessage errors={errors.infusionRate} />
+                                        </FormControl>
                                     </Grid>
-                                    {/* <Grid item md={12} sm={12} xs={12}>
-                                        <ChipAutocomplete 
-                                            suggestions={drugsData}
-                                            label={'Droga'}
-                                            placeHolcer={'Selecciona una o mas opciones'}
-                                        />
-                                    </Grid> */}
                                     <Grid item md={12} sm={12} xs={12}>
                                         <ChipSelectMultiple 
-                                            name={'infusionPump.drugs'}
+                                            name={'drugs'}
                                             label={'Droga/s'}
                                             itemList={drugsData}
-                                            value={values.infusionPump.drugs}
+                                            value={values.drugs}
+                                            selectedValues={values.drugs}
                                             required={true}
                                             formikSetFieldValue={setFieldValue}
-                                            // errors={!!(tType && eType)}
+                                            errors={!!errors.drugs}
                                         />
-                                        {/* <ErrorsMessage errors={tType && eType}/> */}
+                                        <ErrorsMessage errors={errors.drugs}/>
                                     </Grid>
                                 </Grid>
                             </div>
@@ -188,8 +176,14 @@ const InfusionPumpForm = ({ /* formikProps, */ nextStep, prevStep, handleCheckbo
                                         fullWidth
                                         variant="contained"
                                         color="secondary"
+                                        name="prevStep"
                                         className={classes.submit}
-                                        onClick={prevStep}
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            if (e.currentTarget.name !== direction) {
+                                                setDirection(e.currentTarget.name)
+                                            }
+                                            handleSubmit()}}
                                     >
                                         Anterior
                                     </Button>
@@ -200,8 +194,14 @@ const InfusionPumpForm = ({ /* formikProps, */ nextStep, prevStep, handleCheckbo
                                         fullWidth
                                         variant="contained"
                                         color="primary"
+                                        name="nextStep"
                                         className={classes.submit}
-                                        onClick={nextStep}
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            if (e.currentTarget.name !== direction) {
+                                                setDirection(e.currentTarget.name)
+                                            }
+                                            handleSubmit()}}
                                     >
                                         Siguiente
                                     </Button>

@@ -108,18 +108,16 @@ const ChipAutocomplete = ({ suggestions, name, label, placeHolder, required, for
     };
 
     React.useEffect(() => {
-        console.log(selectedItem)
-        if(selectedItem.length > 0) {
+        if(selectedItem && selectedItem.length > 0) {
             formikSetFieldValue(name, selectedItem)
         }
-      }, [selectedItem]);
+    }, [selectedItem]);
 
     React.useEffect(() => {
-        console.log(selectedItem)
-        if(value.length > 0) {
+        if(value && value.length > 0) {
             setSelectedItem(value)
         }
-      }, []);
+    }, []);
 
     return (
         <Downshift

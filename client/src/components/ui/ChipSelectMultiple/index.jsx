@@ -29,7 +29,7 @@ function getStyles(name, value, theme) {
     };
 }
 
-export default function MultipleSelect({ id, name, label, itemList, required, formikSetFieldValue, errors }) {
+export default function MultipleSelect({ id, name, label, itemList, required, formikSetFieldValue, errors, selectedValues }) {
     const classes = styles();
     const theme = useTheme();
 
@@ -40,6 +40,10 @@ export default function MultipleSelect({ id, name, label, itemList, required, fo
     
     React.useEffect(() => {
         setLabelWidth(inputLabel.current.offsetWidth);
+
+        if(selectedValues && selectedValues.length > 0) {
+            setValue(selectedValues)
+        }
     }, []);
 
     function handleChange(e) {
