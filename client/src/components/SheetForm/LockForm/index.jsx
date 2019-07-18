@@ -7,7 +7,6 @@ import FormControl from '@material-ui/core/FormControl';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
-import _map from 'lodash/map';
 
 import { Formik } from 'formik';
 import * as Yup from 'yup';
@@ -20,7 +19,7 @@ import lockTypeList from '../../../mockData/lockTypeList';
 
 const LockForm = ({ nextStep, prevStep, handleCheckbox, lock, setLock, useLock, useLockClass }) => {
     const classes = styles();
-    
+
     const [direction, setDirection] = useState('nextStep');
 
     const validationSchema = () => {
@@ -67,7 +66,6 @@ const LockForm = ({ nextStep, prevStep, handleCheckbox, lock, setLock, useLock, 
             {(props) => {
                 const {
                     values,
-                    touched,
                     errors,
                     handleChange,
                     setFieldValue,

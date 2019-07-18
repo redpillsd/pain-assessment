@@ -24,9 +24,8 @@ const InfusionPumpForm = ({ nextStep, prevStep, handleCheckbox, infusionPump, se
 
     const[drugsData, setDrugsData] = useState([]);
 
-    const { weight } = patient;
-
     useEffect(() =>{
+        const { weight } = patient;
         setDrugsData(calculateDose(infusionPumpDrugsList, weight));
     }, []);
 
@@ -76,22 +75,11 @@ const InfusionPumpForm = ({ nextStep, prevStep, handleCheckbox, infusionPump, se
             {(props) => {
                 const {
                     values,
-                    touched,
                     errors,
                     handleChange,
                     setFieldValue,
                     handleSubmit,
                 } = props;
-                
-                const eInfusionPump = errors && errors.infusionPump,
-                    eTotalVolume = eInfusionPump && eInfusionPump.totalVolume,
-                    eInfusionRate = eInfusionPump && eInfusionPump.infusionRate,
-                    eDrugs = eInfusionPump && eInfusionPump.drugs;
-
-                const tInfusionPump = touched && touched.infusionPump,
-                    tTotalVolume = tInfusionPump && tInfusionPump.totalVolume,
-                    tInfusionRate = tInfusionPump && tInfusionPump.infusionRate,
-                    tDrugs = tInfusionPump && tInfusionPump.drugs;
 
                 return (
                     <div className={classes.paper}>
