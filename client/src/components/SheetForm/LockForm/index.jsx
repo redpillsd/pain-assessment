@@ -10,6 +10,7 @@ import Typography from '@material-ui/core/Typography';
 
 import { Formik } from 'formik';
 import * as Yup from 'yup';
+import _isEmpty from 'lodash/isEmpty';
 import DrugForm from '../DrugForm';
 import ChipSelectMultiple from '../../ui/ChipSelectMultiple';
 import ErrorsMessage from '../../ui/ErrorsMessage';
@@ -33,28 +34,50 @@ const LockForm = ({ nextStep, prevStep, handleCheckbox, lock, setLock, useLock, 
                 totalVolume: Yup.string()
                     .required('Este campo es requerido')
                     .matches(/^[0-9]*$/, 'Este campo debe ser numérico'),
-                /* drugs: Yup.array()
-                    .min(1, 'Agregar por lo menos una')
+                drugs: Yup.array()
+                    .min(1, 'Agrega por lo menos una de las opciones')
                     .of(
                         Yup.object().shape({
-                            name: Yup.string().required(),
-                            dose: Yup.string().required(),
+                            name: Yup.string().required('Este campo es obligatorio'),
+                            dose: Yup.string().required('Este campo es obligatorio'),
                         })
-                    ), */
+                    ),
             });
         }
-        setLock({});
+
         return Yup.mixed().notRequired();
     }
-
-    const onAddNewDrug = () => {
-        console.log('@@@ added');
-    };
 
     return (
         <Formik
             enableReinitialize={true}
-            initialValues={lock}
+            initialValues={(() => {
+                if (useLock && !_isEmpty(lock)) {
+                    console.log('@@ 1', lock)
+                    return lock;
+                } else if (useLock && _isEmpty(lock)) {
+                    console.log('@@ 2', lock)
+                    return(
+                        {
+                            type: [],
+                            totalVolume: '',
+                            drugs: [
+                                {
+                                    name: '',
+                                    dose: ''
+                                }
+                            ]
+                        }
+                    );
+                } else if (!useLock) {
+                    console.log('@@ 4', lock)
+                    if (!_isEmpty(lock)) {
+                        setLock({});
+                        return {};
+                    }
+                    return {};
+                }
+            })()}
             validationSchema={validationSchema}
             onSubmit={(values, { setSubmitting }) => {
                 setSubmitting(true);
@@ -67,6 +90,7 @@ const LockForm = ({ nextStep, prevStep, handleCheckbox, lock, setLock, useLock, 
                 const {
                     values,
                     errors,
+                    touched,
                     handleChange,
                     setFieldValue,
                     handleSubmit,
@@ -104,9 +128,9 @@ const LockForm = ({ nextStep, prevStep, handleCheckbox, lock, setLock, useLock, 
                                             selectedValues={values.type}
                                             required={true}
                                             formikSetFieldValue={setFieldValue}
-                                            errors={!!errors.type}
+                                            errors={!!(touched.type && errors.type)}
                                         />
-                                        <ErrorsMessage errors={errors.type}/>
+                                        <ErrorsMessage errors={touched.type && errors.type}/>
                                     </Grid>
                                     <Grid item md={12} sm={12} xs={12}>
                                         <FormControl fullWidth>
@@ -122,15 +146,16 @@ const LockForm = ({ nextStep, prevStep, handleCheckbox, lock, setLock, useLock, 
                                                 }}
                                                 onChange={handleChange}
                                                 value={values.totalVolume || ''}
-                                                error={!!errors.totalVolume}
+                                                error={!!(touched.totalVolume &&errors.totalVolume)}
                                             />
-                                            <ErrorsMessage errors={ errors.totalVolume} />
+                                            <ErrorsMessage errors={touched.totalVolume &&errors.totalVolume} />
                                         </FormControl>
                                     </Grid>
                                     <Grid item md={12} sm={12} xs={12}>
                                         <DrugForm 
-                                            addNewDrug={() => onAddNewDrug()}
+                                            formikProps={props}
                                         />
+                                        {/* <ErrorsMessage errors={touched.drugs && errors.drugs}/> */}
                                     </Grid>
                                 </Grid>
                             </div>

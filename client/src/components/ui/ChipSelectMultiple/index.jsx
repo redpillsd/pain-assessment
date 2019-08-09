@@ -43,8 +43,10 @@ export default function MultipleSelect({ id, name, label, itemList, required, fo
 
         if(selectedValues && selectedValues.length > 0) {
             setValue(selectedValues)
+        } else {
+            setValue([]);
         }
-    }, []);
+    }, [selectedValues]);
 
     function handleChange(e) {
         setValue(e.target.value);

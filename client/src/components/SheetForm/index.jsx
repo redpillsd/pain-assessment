@@ -5,6 +5,7 @@ import Container from '@material-ui/core/Container'
 import PatientForm from './PatientForm';
 import LockForm from './LockForm';
 import InfusionPumpForm from './InfusionPumpForm';
+import SaveForm from './SaveForm';
 import styles from './styles';
 
 /*  
@@ -20,28 +21,23 @@ import styles from './styles';
 */
 
 const initialPatient = {
-    firstName: 'asdasd',
-    lastName: 'sdasda',
+    firstName: '',
+    lastName: '',
     age: {
-        value: '12',
-        unit: 'Meses',
+        value: '',
+        unit: '',
     },
-    weight: '35',
-    room: '12',
-    medicalHistoryNumber: '12345',
-    diagnosis: [
-        "MAR"
-    ],
-    surgery: [
-        "Colocación de placa en 8"
-    ],
-    pathologicalBackground: 'asdasdasd',
+    weight: '',
+    room: '',
+    medicalHistoryNumber: '',
+    diagnosis: [],
+    surgery: [],
 };
 
-const Sheet = () => {
+const SheetForm = () => {
     const classes = styles();
 
-    const [step, setStep] = useState(3);
+    const [step, setStep] = useState(1);
 
     const [useLock, setUseLock] = useState(false);
     const [useLockClass, setUseLockClass] = useState(classes.hide);
@@ -76,6 +72,11 @@ const Sheet = () => {
     const prevStep = () => {
         setStep(step - 1);
     };
+
+    // Go to step directly
+    const goToStep = (step) => {
+        setStep(step);
+    }
 
     const renderSteps = () => {
         switch (step) {
@@ -114,7 +115,12 @@ const Sheet = () => {
                 );
             case 4:
                 return (
-                    <h1>Success</h1>
+                    <SaveForm 
+                        goToStep={step => goToStep(step)}
+                        patient={patient}
+                        lock={lock}
+                        infusionPump={infusionPump}
+                    />
                 );
             default:
                 return null;
@@ -122,7 +128,7 @@ const Sheet = () => {
     };
 
     return (
-        <Container component="main" maxWidth="xl">
+        <Container fixed component="main" maxWidth="xl">
             <div className={classes.paper}>
                 <Typography component="h1" variant="h5">
                     Creación de Ficha
@@ -133,4 +139,4 @@ const Sheet = () => {
     );
 }
 
-export default Sheet;
+export default SheetForm;

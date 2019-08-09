@@ -3,10 +3,12 @@ import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import FormControl from '@material-ui/core/FormControl';
 import Grid from '@material-ui/core/Grid';
+import Link from '@material-ui/core/Link';
 import Typography from '@material-ui/core/Typography';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
+import { Route, Redirect } from 'react-router-dom';
 
 import ChipAutocomplete from '../../ui/ChipAutocomplete';
 import SelectInput from '../../ui/SelectInput';
@@ -56,7 +58,13 @@ const PatientForm = ({ patient, setPatient, nextStep }) => {
         { value: 'Dias', label: 'Días' },
     ];
 
-    // TODO add function to cancel the creation of the sheet form
+    const handleCancel = e => {
+        console.log('cancelar')
+        e.preventDefault();
+        return (<Route>
+            <Redirect from="/sheet" to="/dashboard" />
+        </Route>)
+    };
 
     return (
         <Formik
@@ -77,7 +85,6 @@ const PatientForm = ({ patient, setPatient, nextStep }) => {
                     handleChange,
                     setFieldValue,
                     handleSubmit,
-                    handleReset,
                 } = props;
                     
                 return (
@@ -249,15 +256,15 @@ const PatientForm = ({ patient, setPatient, nextStep }) => {
                             <Grid container spacing={2}>
                                 <Grid item md={6} sm={6} xs={6}>
                                     <Button
-                                        type="submit"
                                         fullWidth
                                         variant="contained"
                                         color="secondary"
                                         className={classes.submit}
-                                        onClick={handleReset}
+                                        component={Link}
+                                        href="/dashboard"
                                     >
                                         Cancelar
-                                        </Button>
+                                    </Button>
                                 </Grid>
                                 <Grid item md={6} sm={6} xs={6}>
                                     <Button
@@ -269,7 +276,7 @@ const PatientForm = ({ patient, setPatient, nextStep }) => {
                                         onClick={handleSubmit}
                                     >
                                         Siguiente
-                                        </Button>
+                                    </Button>
                                 </Grid>
                             </Grid>
                         </form>

@@ -13,7 +13,7 @@ const renderInput = ({ InputProps, classes, ref, ...other }) => {
     return (
         <TextField
             variant="outlined"
-            margin="normal"
+            margin="dense"
             InputProps={{
                 inputRef: ref,
                 classes: {
@@ -188,9 +188,5 @@ const ChipAutocomplete = ({ suggestions, name, label, placeHolder, required, for
         </Downshift>
     );
 }
-
-/* ChipAutocomplete.propTypes = {
-    classes: PropTypes.object.isRequired,
-}; */
 
 export default ChipAutocomplete;

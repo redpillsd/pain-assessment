@@ -20,6 +20,8 @@ const styles = makeStyles(theme => ({
     },
     inputRoot: {
         flexWrap: 'wrap',
+        paddingTop: theme.spacing(0.5),
+        paddingBottom: theme.spacing(0.5),
     },
     inputInput: {
         width: 'auto',

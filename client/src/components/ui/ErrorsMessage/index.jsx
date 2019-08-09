@@ -1,9 +1,9 @@
 import React from 'react';
-import { FormHelperText } from '@material-ui/core';
+import FormHelperText from '@material-ui/core/FormHelperText';
 
-import styles from './styles'
+import styles from './styles';
 
-const ErrorsMessage = ({errors}) => {
+const ErrorsMessage = ({ errors }) => {
     const classes = styles();
 
     if (errors) {
@@ -12,9 +12,9 @@ const ErrorsMessage = ({errors}) => {
                 {errors}
             </FormHelperText>
         );
-    } else {
-        return null;
-    };
+    }
+
+    return null;
 }
 
 export default ErrorsMessage;

@@ -27,7 +27,7 @@ const SelectInput = ({ id, name, label, itemList, required, errors, formikHandle
                 [name]: selectedValue,
             });
         }
-    }, []);
+    }, [selectedValue]);
 
     const handleChange = e => {
         setValues(oldValues => ({
