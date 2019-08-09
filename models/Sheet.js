@@ -32,6 +32,7 @@ const SheetSchema   = new mongoose.Schema({
             required: true
         },
         age: {
+            // TODO add the unit (años, meses), this shoudl be an object
             type: Number,
             required: true,
         },
@@ -51,11 +52,14 @@ const SheetSchema   = new mongoose.Schema({
             type: String
         }
     },
+    // TODO add inside patient
     room: {
         type: String,
         required: true
     },
     lock: {
+        // TODO should change to array of strings
+        // TODO add totalVolume should be a number
         type: {
             type: String
         },
@@ -64,6 +68,7 @@ const SheetSchema   = new mongoose.Schema({
                 name: {
                     type: String
                 },
+                // TODO dose should be a number
                 dose: {
                     type: String
                 }
@@ -71,6 +76,7 @@ const SheetSchema   = new mongoose.Schema({
         ]
     },
     infusionPump: {
+        // TODO totalVolume should be a number
         totalVolume: {
             type: String
         },
@@ -82,6 +88,7 @@ const SheetSchema   = new mongoose.Schema({
                 name: {
                     type: String
                 },
+                // TODO dose should be a number
                 dose: {
                     type: String
                 }
@@ -146,7 +153,7 @@ const SheetSchema   = new mongoose.Schema({
                     ]
                 }
             },
-            notes: {
+            note: {
                 type: String
             }
         }
