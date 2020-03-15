@@ -2,8 +2,12 @@ import React, { useState, useEffect } from 'react';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import FormControl from '@material-ui/core/FormControl';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Checkbox from '@material-ui/core/Checkbox';
 import Link from '@material-ui/core/Link';
 import Grid from '@material-ui/core/Grid';
+import Box from '@material-ui/core/Box';
+// import Slider from '@material-ui/core/Slider';
 import Typography from '@material-ui/core/Typography';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import Container from '@material-ui/core/Container';
@@ -12,7 +16,7 @@ import _map from 'lodash/map';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import SelectInput from '../ui/SelectInput';
-import Slider from './Slider'
+import Slider from './Slider';
 import ChipSelectMultiple from '../ui/ChipSelectMultiple';
 import ErrorsMessage from '../ui/ErrorsMessage';
 import styles from './styles';
@@ -22,7 +26,7 @@ import infusionPumpDrugsList from '../../mockData/infusionPumpDrugsList';
 const EvaluationForm = () => {
     const classes = styles();
 
-    const[rescueData, setRescueData] = useState([]);
+    const [rescueData, setRescueData] = useState([]);
 
     useEffect(() =>{
         setRescueData(parseData(infusionPumpDrugsList));
@@ -31,6 +35,24 @@ const EvaluationForm = () => {
     const shift = [
         { value: 'Mañana', label: 'Mañana' },
         { value: 'Tarde', label: 'Tarde' },
+    ];
+
+    const scale = [
+        { value: 'EVN', label: 'EVN (Subjetiva)' },
+        { value: 'LLANTO', label: 'LLANTO (Objetiva)' },
+    ];
+
+    const painLevel = [
+        { value: 1, label: '1' },
+        { value: 2, label: '2' },
+        { value: 3, label: '3' },
+        { value: 4, label: '4' },
+        { value: 5, label: '5' },
+        { value: 6, label: '6' },
+        { value: 7, label: '7' },
+        { value: 8, label: '8' },
+        { value: 9, label: '9' },
+        { value: 10, label: '10' },
     ];
     
     const parseData = (list) => {
@@ -49,6 +71,7 @@ const EvaluationForm = () => {
             initialValues={{
                 infusionRate: '',
                 shift: '',
+                scale: '',
                 painLevel: 0,
                 rescue: []
             }}
@@ -74,6 +97,8 @@ const EvaluationForm = () => {
                     .required('Este campo es requerido')
                     .matches(/^[0-9]*$/, 'Este campo debe ser numérico'),
                 shift: Yup.string()
+                    .required('Este campo es requerido'),
+                scale: Yup.string()
                     .required('Este campo es requerido'),
                 painLevel: Yup.number()
                     .min(1, 'Seleccione un valor del 1 al 10')
@@ -144,14 +169,40 @@ const EvaluationForm = () => {
                                         </FormControl>
                                     </Grid>
                                     <Grid item md={12} sm={12} xs={12}>
-                                        <Slider
-                                            name={'painLevel'}
-                                            title={'Selecciona nivel de dolor'}
-                                            value={values.painLevel}
-                                            formikHandleChange={handleChange}
-                                        />
-                                        <div>{errors.paintLevel}</div> 
-                                        <ErrorsMessage errors={touched.painLevel && errors.painLevel}/>
+                                        <Box border={1} borderColor={'rgba(0, 0, 0, 0.23)'} borderRadius={5}>
+                                            <div className={classes.paper}>
+                                                <Grid className={classes.painLevel} item md={12} sm={12} xs={12}>
+                                                    
+                                                        <SelectInput
+                                                            id={'scale'}
+                                                            name={'scale'}
+                                                            label={'Escala'}
+                                                            itemList={scale}
+                                                            value={values.scale}
+                                                            selectedValue={values.scale}
+                                                            required={true}
+                                                            formikHandleChange={handleChange}
+                                                            errors={!!(touched.scale && errors.scale)}
+                                                        />
+                                                        <ErrorsMessage errors={touched.scale && errors.scale}/>
+                                                    
+                                                </Grid>
+                                                <Grid className={classes.painLevel} item md={12} sm={12} xs={12}>
+                                                    <SelectInput
+                                                        id={'painLevel'}
+                                                        name={'painLevel'}
+                                                        label={'Nivel de Dolor'}
+                                                        itemList={painLevel}
+                                                        value={values.painLevel && values.painLevel}
+                                                        selectedValue={values.painLevel && values.painLevel}
+                                                        required={true}
+                                                        formikHandleChange={handleChange}
+                                                        errors={!!((touched.painLevel && touched.painLevel) && ( errors.painLevel && errors.painLevel))}
+                                                    />
+                                                    <ErrorsMessage errors={(touched.painLevel && touched.painLevel) && ( errors.painLevel && errors.painLevel)}/>
+                                                </Grid>
+                                            </div>
+                                        </Box>
                                     </Grid>
                                     <Grid item md={12} sm={12} xs={12}>
                                         <ChipSelectMultiple 
@@ -162,9 +213,9 @@ const EvaluationForm = () => {
                                             selectedValues={values.rescue}
                                             required={true}
                                             formikSetFieldValue={setFieldValue}
-                                            errors={!!errors.rescue}
+                                            errors={!!(touched.rescue && errors.rescue)}
                                         />
-                                        <ErrorsMessage errors={errors.rescue}/>
+                                        <ErrorsMessage errors={touched.rescue && errors.rescue}/>
                                     </Grid>
                                     <Grid item md={12} sm={12} xs={12}>
                                         <FormControl fullWidth>
@@ -175,9 +226,20 @@ const EvaluationForm = () => {
                                                 label="Efectos Adversos"
                                                 name="adverseEffects"
                                                 onChange={handleChange}
-                                                value={values.adverseEffects}
+                                                value={values.adverseEffects || ''}
                                             />
                                         </FormControl>
+                                    </Grid>
+                                    <Grid item md={12} sm={12} xs={12}>
+                                        <FormControlLabel
+                                            checked={values.roomChange || false}
+                                            className={classes.checkbox}
+                                            control={<Checkbox color="primary" />}
+                                            label="Cambio de Habitación"
+                                            name="roomChange"
+                                            labelPlacement="start"
+                                            onChange={handleChange}
+                                        />
                                     </Grid>
                                     <Grid item md={12} sm={12} xs={12}>
                                         <FormControl fullWidth>
@@ -188,7 +250,7 @@ const EvaluationForm = () => {
                                                 label="Nota"
                                                 name="note"
                                                 onChange={handleChange}
-                                                value={values.note}
+                                                value={values.note || ''}
                                             />
                                         </FormControl>
                                     </Grid>
