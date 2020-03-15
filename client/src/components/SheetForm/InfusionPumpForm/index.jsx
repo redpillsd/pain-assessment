@@ -13,6 +13,7 @@ import { Formik } from 'formik';
 import * as Yup from 'yup';
 import ChipSelectMultiple from '../../ui/ChipSelectMultiple';
 import ErrorsMessage from '../../ui/ErrorsMessage';
+import PatientCard from '../../ui/PatientCard';
 import styles from './styles';
 
 import infusionPumpDrugsList from '../../../mockData/infusionPumpDrugsList';
@@ -43,9 +44,6 @@ const InfusionPumpForm = ({ nextStep, prevStep, handleCheckbox, infusionPump, se
     const validationSchema = () => {
         if (useInfusionPump) {
             return Yup.object({
-                totalVolume: Yup.string()
-                    .required('Este campo es requerido')
-                    .matches(/^[0-9]*$/, 'Este campo debe ser numérico'),
                 infusionRate: Yup.string()
                     .required('Este campo es requerido')
                     .matches(/^[0-9]*$/, 'Este campo debe ser numérico'),
@@ -89,6 +87,7 @@ const InfusionPumpForm = ({ nextStep, prevStep, handleCheckbox, infusionPump, se
                         <div>
                             <pre>{JSON.stringify(props, null, 2)}</pre>
                         </div>
+                        <PatientCard fullCard={false} />
                         <Grid container spacing={2}>
                             <Grid item md={12} sm={12} xs={12}>
                                 <FormControlLabel
@@ -104,25 +103,6 @@ const InfusionPumpForm = ({ nextStep, prevStep, handleCheckbox, infusionPump, se
                         <form className={classes.form} noValidate>
                             <div className={useInfusionPumpClass}>
                                 <Grid container spacing={2}>
-                                    <Grid item md={12} sm={12} xs={12}>
-                                        <FormControl fullWidth>
-                                            <TextField
-                                                variant="outlined"
-                                                margin="dense"
-                                                required
-                                                fullWidth
-                                                label="Volumen Total"
-                                                name="totalVolume"
-                                                InputProps={{
-                                                    endAdornment: <InputAdornment position="end">ml</InputAdornment>,
-                                                }}
-                                                onChange={handleChange}
-                                                value={values.totalVolume || ''}
-                                                error={!!errors.totalVolume}
-                                            />
-                                            <ErrorsMessage errors={errors.totalVolume} />
-                                        </FormControl>
-                                    </Grid>
                                     <Grid item md={12} sm={12} xs={12}>
                                         <FormControl fullWidth>
                                             <TextField
@@ -154,6 +134,20 @@ const InfusionPumpForm = ({ nextStep, prevStep, handleCheckbox, infusionPump, se
                                             errors={!!errors.drugs}
                                         />
                                         <ErrorsMessage errors={errors.drugs}/>
+                                    </Grid>
+                                    <Grid item md={12} sm={12} xs={12}>
+                                        <TextField
+                                            variant="outlined"
+                                            margin="dense"
+                                            disabled
+                                            fullWidth
+                                            label="Volumen Total"
+                                            name="totalVolume"
+                                            InputProps={{
+                                                endAdornment: <InputAdornment position="end">ml</InputAdornment>,
+                                            }}
+                                            value={values.totalVolume = 500 || ''}
+                                        />
                                     </Grid>
                                 </Grid>
                             </div>

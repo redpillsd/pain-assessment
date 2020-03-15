@@ -98,6 +98,7 @@ const SheetForm = () => {
                         setLock={lock => setLock(lock)}
                         useLock={useLock}
                         useLockClass={useLockClass}
+                        patient={patient}
                     />
                 );
             case 3:

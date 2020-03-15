@@ -18,7 +18,7 @@ import EvaluationCard from './EvaluationCard'
 
 import styles from './styles';
 // TODO add the logic for the sheetId
-const PacientCard = ({ active, sheetId }) => {
+const PatientCard = ({ active, fullCard, sheetId }) => {
     const classes = styles();
 
     const [expanded, setExpanded] = useState(false);
@@ -27,17 +27,23 @@ const PacientCard = ({ active, sheetId }) => {
         setExpanded(!expanded);
     }
 
+    const cardHeader = fullCard ?   <CardHeader
+                                        className={active ? classes.active : classes.inactive}
+                                        title="Fulano Mengano"
+                                        subheader="Ingresó: 27/07/19"
+                                    /> :
+                                    <CardHeader
+                                        title="Fulano Mengano"
+                                    />;
+
+
     return (
         <Card className={classes.card}>
-            <CardHeader
-                className={active ? classes.active : classes.inactive}
-                title="Fulano Mengano"
-                subheader="Ingresó: 27/07/19"
-            />
+            { cardHeader }
             <CardContent className={classes.content}>
-                <Typography variant="h6" component="p">
+                { fullCard && <Typography variant="h6" component="p">
                     Bomba y Bloqueo
-                </Typography>
+                </Typography> }
                 <Typography variant="body1" component="p">
                     Habitación: 24A
                 </Typography>
@@ -48,14 +54,14 @@ const PacientCard = ({ active, sheetId }) => {
                     Peso: 133 Kg
                 </Typography>
             </CardContent>
-            <CardActions>
+            { fullCard && <CardActions>
                 <IconButton
                     component={Link}
                     href="/sheet"
                 >
                     <EditIcon />
                 </IconButton>
-                <IconButton 
+                <IconButton
                     component={Link}
                     href="/evaluation"
                 >
@@ -71,8 +77,8 @@ const PacientCard = ({ active, sheetId }) => {
                 >
                     <ExpandMoreIcon />
                 </IconButton>
-            </CardActions>
-            <Collapse in={expanded} timeout="auto" unmountOnExit>
+            </CardActions> }
+            { fullCard && <Collapse in={expanded} timeout="auto" unmountOnExit>
                 <CardContent>
                     <EvaluationCard />
                     <EvaluationCard />
@@ -105,9 +111,9 @@ const PacientCard = ({ active, sheetId }) => {
                     Set aside off of the heat to let rest for 10 minutes, and then serve.
                 </Typography>
                 </CardContent> */}
-            </Collapse>
+            </Collapse> }
         </Card>
     );
 }
 
-export default PacientCard;
+export default PatientCard;

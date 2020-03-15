@@ -7,8 +7,7 @@ import Fab from '@material-ui/core/Fab';
 import Typography from '@material-ui/core/Typography';
 import AddIcon from '@material-ui/icons/Add';
 
-import PatientCard from './PacientCard';
-import EvaluationCard from './PacientCard/EvaluationCard';
+import PatientCard from '../ui/PatientCard';
 
 import styles from './styles';
 
@@ -22,15 +21,15 @@ const Dashboard = () => {
                     Dashboard
                 </Typography>
                 <div className={classes.list}>
-                    <PatientCard active={true} />
-                    <PatientCard active={true} />
-                    <PatientCard active={true} />
-                    <PatientCard active={true} />
-                    <PatientCard active={false} />
-                    <PatientCard active={false} />
+                    <PatientCard active={true} fullCard={true} />
+                    <PatientCard active={true} fullCard={true} />
+                    <PatientCard active={true} fullCard={true} />
+                    <PatientCard active={true} fullCard={true} />
+                    <PatientCard active={false} fullCard={true} />
+                    <PatientCard active={false} fullCard={true} />
                 </div>
-                <Fab color="primary" 
-                    aria-label="add" 
+                <Fab color="primary"
+                    aria-label="add"
                     className={classes.fab}
                     component={Link}
                     href="/sheet">

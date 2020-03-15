@@ -29,7 +29,7 @@ const EvaluationCard = ({ active, evaluationId }) => {
                     Efectos adversos: lalala lalal lalalalalal 
                 </Typography>
                 <Typography variant="body2" component="p">
-                    Nota: esto es una nota
+                    <b>Nota: esto es una nota</b>
                 </Typography>
                 <Typography variant="body2" component="p">
                     Evaluador: Don Ñoqui

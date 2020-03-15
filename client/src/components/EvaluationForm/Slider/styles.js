@@ -13,9 +13,9 @@ const styles = makeStyles({
         display: 'flex',
         alignItems: 'center',
     },
-    points: {
-        fontSize: '22px',
-    }
+    // points: {
+    //     padding: '50px'
+    // }
 });
 
 export default styles;

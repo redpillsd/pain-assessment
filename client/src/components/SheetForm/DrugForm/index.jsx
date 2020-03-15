@@ -30,8 +30,8 @@ const DrugForm = ({ formikProps }) => {
                     <Fragment>
                         {values.drugs && values.drugs.length > 0 && values.drugs.map((drug, index) => (
                         <div className={classes.paper} key={index}>
-                            <div>{index}</div>
-                            <div>{values.drugs[index].name}</div>
+                            {/* <div>{index}</div>
+                            <div>{values.drugs[index].name}</div> */}
                             <Grid item md={12} sm={12} xs={12}>
                                 <SelectInput
                                     id={values.drugs[index].name}
@@ -58,7 +58,7 @@ const DrugForm = ({ formikProps }) => {
                                             name={`drugs[${index}].dose`}
                                             value={values.drugs[index].dose}
                                             InputProps={{
-                                                endAdornment: <InputAdornment position="end">%</InputAdornment>,
+                                                endAdornment: <InputAdornment position="end">ml</InputAdornment>,
                                             }}
                                             onChange={handleChange}
                                             error={!!(errors.drugs && errors.drugs[index] && errors.drugs[index].dose)}
@@ -73,8 +73,8 @@ const DrugForm = ({ formikProps }) => {
                                         color="secondary" 
                                         aria-label="Delete"
                                         onClick={() => {
-                                            console.log('@@@ deleted ->',values.drugs[index].name)
-                                            remove(values.drugs[index].name);
+                                            // console.log('@@@ deleted ->',values.drugs[index].name)
+                                            remove(index);
                                         }}
                                     >
                                         <DeleteIcon />
